@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../Redux/userSlice';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast'
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(true);
@@ -14,6 +19,10 @@ const SignInModal = ({ isOpen, onClose }) => {
   email: '',
   password: ''
 });
+
+const BASEURL=import.meta.env.VITE_BASEURL
+const navigate=useNavigate()
+ const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,15 +40,16 @@ const SignInModal = ({ isOpen, onClose }) => {
   };
 
      if(!formData.name&&isSignUp){
+   
         newErrors.name="Name required"
-        return false;
-     }else if(!nameRegex.test(formData.name)&&isSignUp){
+       }else if(!nameRegex.test(formData.name)&&isSignUp){
         newErrors.name = 'Name should contain only letters and spaces (2–50 characters)';
-        return false;
+    
+
      }
 
      if(!formData.email){
-        newErrors.email="Name required"
+        newErrors.email="Email required"
      }else if(!emailRegex.test(formData.email)){
          newErrors.email="Provide a valid email format"
      }
@@ -53,6 +63,7 @@ const SignInModal = ({ isOpen, onClose }) => {
 
       setErrors(newErrors);
 
+
  
      return Object.values(newErrors).every(error => error === '');
     
@@ -63,16 +74,32 @@ const SignInModal = ({ isOpen, onClose }) => {
 
 
 
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-const handleSubmit = (e) => {
-    e.preventDefault();
+  const isValid = validate();
+  if (!isValid) return;
 
-if( validate()){
-console.log(isSignUp ? 'Sign Up' : 'Sign In', formData);
-}
-  
+  const endpoint = isSignUp ? "/auth/signup" : "/auth/signin";
+
+
+  try {
+    const res = await axios.post(`${BASEURL}${endpoint}`, formData);
+    dispatch(setUser({
+  user: res.data.user,
+  token: res.data.token
+
+}));
     
-  };
+ toast.success(`${isSignUp ? 'Signup' : 'Signin'} successful`);
+
+    onClose();
+    
+
+  } catch (err) {
+    console.error(`${isSignUp ? 'Signup' : 'Signin'} failed:`, err.response?.data || err.message);
+  }
+};
 
   const handleGoogleAuth = () => {
     // Implement Google Auth logic here
@@ -152,7 +179,10 @@ console.log(isSignUp ? 'Sign Up' : 'Sign In', formData);
                 </div>
                
               )}
-             {/* {error && <p className="text-red-500 text-sm mt-1">{error}</p>} */}
+{errors.name && (
+  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+)}
+
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -166,6 +196,9 @@ console.log(isSignUp ? 'Sign Up' : 'Sign In', formData);
          
                 />
               </div>
+              {errors.email && (
+  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+)}
               <div>
                 <label className="block text-sm font-medium text-gray-700">Password</label>
                 <input
@@ -178,6 +211,9 @@ console.log(isSignUp ? 'Sign Up' : 'Sign In', formData);
          
                 />
               </div>
+              {errors.password && (
+  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+)}
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"

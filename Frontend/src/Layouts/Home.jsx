@@ -4,8 +4,17 @@ import Features from "../Components/Features";
 import Contact from "../Components/Contact";
 import About from "../Components/About";
 import Footer from "../Components/Footer";
+import { useSelector } from 'react-redux';
+
+
 
 const Home=()=>{
+
+    const { user, token } = useSelector((state) => state.user);
+
+    if(user){
+        console.log(user);
+        }
 
 
 

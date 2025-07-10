@@ -10,18 +10,41 @@ const Hero=()=>{
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   };
+  const BASEURL=import.meta.env.VITE_BASEURL
 
 
 
-   const handleResumeUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
-      setResume(file);
-      alert('Resume uploaded successfully!');
-    } else {
-      alert('Please upload a valid resume file (PDF, DOC, DOCX).');
+const handleResumeUpload = async (e) => {
+  const file = e.target.files[0];
+  if (
+    file &&
+    ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)
+  ) {
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    try {
+    
+    const res = await axios.post(`${BASEURL}/upload-resume`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+   
+
+      const data = await res.json();
+      console.log('Extracted Data:', data);
+      alert(`Name: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone}`);
+    } catch (err) {
+      alert('Error uploading resume');
+      console.error(err);
     }
-  };
+  } else {
+    alert('Please upload a valid resume file (PDF, DOC, DOCX).');
+  }
+};
+
 
 
 

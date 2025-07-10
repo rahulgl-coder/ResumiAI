@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaUpload, FaRobot, FaCheckCircle, FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import SignInModal from './Signup';
+import { useSelector } from 'react-redux';
 
 
 
@@ -12,8 +13,12 @@ import SignInModal from './Signup';
 
 const Navbar=()=>{
     const [modalOpen, setModalOpen] = useState(false);
-    const [menu ,setMenu]=useState(false)
+    const [menu ,setMenu]=useState(false) 
+    const { user } = useSelector((state) => state.user);
+    const [users,setUsers] =useState(user)
 
+      
+    
 
 
     const navVariants = {
