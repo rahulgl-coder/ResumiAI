@@ -4,7 +4,7 @@ import { Toaster } from 'react-hot-toast';
 
 
 import Home from './Layouts/Home'
-import SignInModal from './Components/Signup';
+import ResultForm from './Components/Resumeform';
 
 function App() {
 
@@ -15,6 +15,7 @@ function App() {
      <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+           <Route path="/resume_result" element={<ResultForm />} />
      
       </Routes>
     </Router>
