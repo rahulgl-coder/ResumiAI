@@ -1,6 +1,7 @@
 
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
+const Resume=require('../Models/resumeSchema')
 
 
  const resumeParser=async (req, res) => {
@@ -145,5 +146,56 @@ const extractDetails = (text) => {
 
 
 
+const saveResume = async (req, res) => {
+  try {
+    const {
+      userId,
+      phone,
+      dob,
+      skills,
+      qualifications,
+      passoutYear,
+      preferredLocation,
+      currentLocation,
+      workModes,
+      name,
+      email
+    } = req.body;
 
-module.exports={resumeParser}
+
+    if (
+      !userId || !phone || !dob || !skills?.length || !qualifications ||
+      !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+
+    const newResume = await Resume.create({
+      userId,
+      name,
+      email,
+      phone,
+      dob,
+      skills,
+      qualifications,
+      passoutYear,
+      preferredLocation,
+      currentLocation,
+      workModes
+    });
+
+    console.log("Resume Saved:", newResume);
+
+    return res.status(201).json({ message: "Resume saved successfully", resume: newResume });
+  } catch (error) {
+    console.error("Save Resume Error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+module.exports={resumeParser,saveResume}

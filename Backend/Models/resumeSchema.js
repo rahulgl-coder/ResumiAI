@@ -6,22 +6,53 @@ const resumeSchema = new mongoose.Schema({
     ref: "User", // Referencing the User model
     required: true
   },
-
-  name: {
-    type: String,
-    required: true
+  phone:{
+    type:Number,
+    require:true
   },
 
-  skills: {
+ skills: {
     type: [String], 
     required: true
   },
 
-  qualification: {
+  qualifications: {
     type: [String], 
     required: true
+  },
+
+  dob:{
+    type:Date,
+    required:true
+  },
+
+  passoutYear:{
+    type:Number,
+    required:true
+  },
+ preferredLocation:{
+  type:[String],
+  required:true
+ },
+
+ currentLocation:{
+  type:String,
+  required:true
+ },
+  workModes: {
+    type: [String],
+    enum: ['Remote', 'Hybrid', 'Onsite'],
+    default: []
   }
-}, {
+
+
+
+
+}, 
+
+
+
+{
   timestamps: true 
 });
 

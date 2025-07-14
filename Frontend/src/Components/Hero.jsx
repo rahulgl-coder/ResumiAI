@@ -1,14 +1,22 @@
-
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaUpload } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import axios from "axios";
+import { IoMdCloseCircle } from "react-icons/io";
+import { useSelector } from 'react-redux';  
 
 const Hero = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resumeData, setResumeData] = useState(null);
+  const [userSkills, setUserSkills] = useState([]);
+  const [skill, setSkill] = useState('');
+  const [location, setLocation] = useState('');
+  const [userLocation, setUserLocation] = useState([]);
+   const user = useSelector((state) => state.user.user);
+
+
+
+  
 
   const BASEURL = import.meta.env.VITE_BASEURL;
 
@@ -36,13 +44,14 @@ const Hero = () => {
           email: data?.email || '',
           phone: data?.phone || '',
           dob: data?.dob || '',
-          skills: data?.skills || '',
+          skills: data?.skills || [],
           qualifications: data?.qualifications || '',
           passoutYear: '',
           preferredLocation: '',
           currentLocation: '',
-          workModes: [] // Remote, Hybrid, Onsite
+          workModes: []
         });
+        setUserSkills(data.skills || []);
       } catch (err) {
         console.error(err);
         alert('Error uploading resume');
@@ -55,6 +64,10 @@ const Hero = () => {
   const handleModalClose = () => {
     setResumeData(null);
     setSelectedFile(null);
+    setUserSkills([]);
+    setUserLocation([]);
+    setSkill('');
+    setLocation('');
   };
 
   const handleFormChange = (e) => {
@@ -78,10 +91,57 @@ const Hero = () => {
     });
   };
 
+  const cleanPhoneNumber = (input) => {
+  let phone = input.trim();
+
+  if (phone.startsWith('+91')) {
+    phone = phone.slice(3);
+  } else if (phone.startsWith('0')) {
+    phone = phone.slice(1);
+  }
+
+  const phoneRegex = /^[6-9]\d{9}$/;
+  return phoneRegex.test(phone) ? phone : null;
+};
+
+
+  const validateFields = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+ 
+    const nameRegex = /^[a-zA-Z ]{3,}$/;
+    const locationRegex = /^[a-zA-Z ,.-]{2,}$/;
+    const cleanedPhone = cleanPhoneNumber(resumeData.phone);
+
+
+    if (!nameRegex.test(resumeData.name)) return 'Invalid name';
+    if (!emailRegex.test(resumeData.email)) return 'Invalid email';
+
+     if (!cleanedPhone)   return 'Invalid phone number';
+
+
+
+
+    if (!resumeData.dob) return 'Date of Birth is required';
+    if (!locationRegex.test(resumeData.currentLocation)) return 'Invalid current location';
+
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const error = validateFields();
+    if (error) return alert(error);
+
+const data= {...resumeData,
+        skills: userSkills,
+        preferredLocation: userLocation,
+       userId: user._id}
+        console.log(data);
+        
     try {
-      await axios.post(`${BASEURL}/save-profile`, resumeData);
+  const res=  await axios.post(`${BASEURL}/save-profile`, data);
+console.log(res.message);
+
       alert('Profile saved successfully!');
       handleModalClose();
     } catch (err) {
@@ -90,9 +150,32 @@ const Hero = () => {
     }
   };
 
+  const removeSkill = (skill) => {
+    setUserSkills(userSkills.filter((s) => s !== skill));
+  };
+
+  const addSkill = (data) => {
+    if (data && !userSkills.includes(data)) {
+      setUserSkills([...userSkills, data]);
+      setSkill('');
+    }
+  };
+
+  const removeLocation = (loc) => {
+    setUserLocation(userLocation.filter((s) => s !== loc));
+  };
+
+  const addLocation = (data) => {
+    if (data && !userLocation.includes(data)) {
+      setUserLocation([...userLocation, data]);
+      setLocation('');
+    }
+  };
+  
+
   return (
     <>
-      <section className="bg-gradient-to-r from-blue-50 to-teal-50 h-screen flex items-center justify-center text-black relative">
+      <section className="bg-gradient-to-r from-blue-50 to-teal-50 h-screen  flex items-center justify-center text-black relative">
         <div className="text-center max-w-4xl mx-auto px-4">
           <motion.h1 className="text-4xl sm:text-6xl font-extrabold mb-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             Launch Your Career with Resumi
@@ -129,7 +212,7 @@ const Hero = () => {
 
         {/* Modal */}
         {resumeData && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-stone-950/30 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl relative overflow-y-auto max-h-[90vh]">
               <button
                 onClick={handleModalClose}
@@ -144,10 +227,10 @@ const Hero = () => {
                   { label: 'Email', name: 'email' },
                   { label: 'Phone', name: 'phone' },
                   { label: 'Date of Birth', name: 'dob', type: 'date' },
-                  { label: 'Skills (comma-separated)', name: 'skills' },
+                  // { label: 'Skills (comma-separated)', name: 'skills' },
                   { label: 'Qualifications', name: 'qualifications' },
                   { label: 'Passout Year', name: 'passoutYear', type: 'number' },
-                  { label: 'Preferred Location', name: 'preferredLocation' },
+                  // { label: 'Preferred Location', name: 'preferredLocation' },
                   { label: 'Current Location', name: 'currentLocation' },
                 ].map(({ label, name, type = 'text' }) => (
                   <div key={name}>
@@ -161,7 +244,60 @@ const Hero = () => {
                       required={['name', 'email'].includes(name)}
                     />
                   </div>
+
                 ))}
+
+
+                <div>
+                  
+                    <label htmlFor="">Skills</label>
+                  <div className='flex'>
+                      <input type="text"
+                    value={skill}
+                    onChange={(e)=>setSkill(e.target.value)}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400' />
+                  <p className=' bg-gradient-to-r from-teal-500 to-blue-500 text-white py-3 px-6 ml-2 rounded-full font-semibold hover:from-teal-600 hover:to-blue-600 transition duration-300' onClick={()=>addSkill(skill)}>Add</p>
+                  </div>
+                  
+                <div className='flex flex-wrap gap-2'>
+                  {userSkills?.map((field) => {
+                    return(
+                        <div key={field.name} className="mb-4   w-fit  ">
+                  
+                        <p
+                          className="mt-1  flex items-center gap-1  border border-gray-300 rounded-md shadow-sm p-2"
+                        >{field} <span onClick={()=>{removeSkill(field)}}><IoMdCloseCircle /></span></p>
+                      </div>
+                    )
+})}
+</div>
+</div>
+
+ <div>
+                  
+                    <label htmlFor="">Prefered Locations</label>
+                  <div className='flex'>
+                      <input type="text"
+                    value={location}
+                    onChange={(e)=>setLocation(e.target.value)}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-400' />
+                  <p className=' bg-gradient-to-r from-teal-500 to-blue-500 text-white py-3 px-6 ml-2 rounded-full font-semibold hover:from-teal-600 hover:to-blue-600 transition duration-300' onClick={()=>addLocation(location)}>Add</p>
+                  </div>
+                  
+                <div className='flex flex-wrap gap-2'>
+                  {userLocation?.map((field) => {
+                    return(
+                        <div key={field.name} className="mb-4   w-fit  ">
+                      
+                        <p
+                          className="mt-1  flex items-center gap-1  border border-gray-300 rounded-md shadow-sm p-2"
+                        >{field} <span onClick={()=>{removeLocation(field)}}><IoMdCloseCircle /></span></p>
+                      </div>
+                    )
+})}
+</div>
+</div>
+
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-2">Work Mode Preferences</label>

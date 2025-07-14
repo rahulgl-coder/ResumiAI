@@ -9,6 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 
 resumeRoute.post('/upload-resume', upload.single('resume'),controller.resumeParser);
+resumeRoute.post('/save-profile',controller.saveResume)
 
 
 module.exports=resumeRoute
