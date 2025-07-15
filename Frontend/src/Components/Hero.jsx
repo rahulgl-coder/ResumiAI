@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import axios from "axios";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useSelector } from 'react-redux';  
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -13,7 +14,7 @@ const Hero = () => {
   const [location, setLocation] = useState('');
   const [userLocation, setUserLocation] = useState([]);
    const user = useSelector((state) => state.user.user);
-
+    const navigate=useNavigate()
 
 
   
@@ -140,9 +141,10 @@ const data= {...resumeData,
         
     try {
   const res=  await axios.post(`${BASEURL}/save-profile`, data);
-console.log(res.message);
+
 
       alert('Profile saved successfully!');
+      navigate('/interview-intro')
       handleModalClose();
     } catch (err) {
       console.error(err);

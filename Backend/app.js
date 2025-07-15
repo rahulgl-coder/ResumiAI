@@ -9,6 +9,7 @@ const PORT=process.env.PORT
 
 const resumeRoute = require('./Routes/resumRoute');
 const userRoute=require('./Routes/authRoutes')
+const interviewRoute=require('./Routes/interviewRoute')
 const cors = require('cors');
 
 
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(express.json())
 app.use('/auth',userRoute)
 app.use(resumeRoute)
+app.use(interviewRoute)
 
 
 
