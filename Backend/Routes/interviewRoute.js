@@ -3,6 +3,9 @@ const interviewRoute=express.Router()
 const controller=require('../Controllers/interviewController')
 
 
+interviewRoute.get('/questions/:id',controller.getQuestions)
+
+
 
 
 

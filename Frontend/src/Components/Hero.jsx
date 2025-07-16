@@ -5,6 +5,7 @@ import axios from "axios";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useSelector } from 'react-redux';  
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast'
 
 const Hero = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -13,8 +14,8 @@ const Hero = () => {
   const [skill, setSkill] = useState('');
   const [location, setLocation] = useState('');
   const [userLocation, setUserLocation] = useState([]);
-   const user = useSelector((state) => state.user.user);
-    const navigate=useNavigate()
+  const user = useSelector((state) => state.user.user);
+  const navigate=useNavigate()
 
 
   
@@ -27,6 +28,14 @@ const Hero = () => {
   };
 
   const handleVerifyResume = async () => {
+console.log(user);
+
+    if(!user){
+      
+     toast.error("Sign In for features")
+     return
+
+    }
     if (
       selectedFile &&
       ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(selectedFile.type)
@@ -205,7 +214,7 @@ const data= {...resumeData,
               onClick={handleVerifyResume}
               className="bg-teal-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-teal-600"
               whileHover={{ scale: 1.05 }}
-              disabled={!selectedFile}
+              // disabled={!selectedFile}
             >
               Verify Now
             </motion.button>

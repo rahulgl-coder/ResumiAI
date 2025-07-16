@@ -9,7 +9,7 @@ const InterviewIntro = () => {
    const user = useSelector((state) => state.user.user);
    const candidateId=user._id
   const handleStart = () => {
-    navigate(`/interview/${candidateId}`);
+    navigate("/interview");
   };
 
   const messages = [

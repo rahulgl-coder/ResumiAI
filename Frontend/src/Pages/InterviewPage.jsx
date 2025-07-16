@@ -1,26 +1,53 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+  import { useSelector } from 'react-redux';
 
 const Interview = () => {
-  const { candidateId } = useParams(); 
+   
 
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
-  const BASEURL=import.meta.env.VITE_BASEURL
-
-//   useEffect(() => {
-//     axios.get(`http://localhost:5000/api/questions/${candidateId}`)
-//       .then(res => setQuestions(res.data.questions));
-//   }, [candidateId]);
+  
+   const user = useSelector((state) => state.user.user);
+   const candidateId=user._id
+   const BASEURL=import.meta.env.VITE_BASEURL
 
   useEffect(() => {
-    if (timeLeft === 0) handleNext();
-    const interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
-    return () => clearInterval(interval);
-  }, [timeLeft]);
+
+    const fetch=async()=>{
+
+      try {
+
+      const res=await axios.get(`${BASEURL}/questions/${candidateId}`)
+      setQuestions(res.data.questions)
+        
+      } catch (error) {
+        
+      }
+
+
+    }
+
+    fetch()
+   
+  }, [candidateId]);
+
+useEffect(() => {
+  if (timeLeft === 0) {
+    handleNext();
+    return;
+  }
+
+  const interval = setInterval(() => {
+    setTimeLeft(t => t - 1);
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, [timeLeft]);
+
 
   const handleNext = () => {
     setAnswers([...answers, { question: questions[current], answer: "" }]);

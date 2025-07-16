@@ -5,6 +5,8 @@ import { FaUpload, FaRobot, FaCheckCircle, FaBars, FaTimes } from 'react-icons/f
 import { useNavigate } from 'react-router-dom';
 import SignInModal from './Signup';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { clearUser } from '../Redux/userSlice';
 
 
 
@@ -17,6 +19,8 @@ const Navbar=()=>{
     const { user } = useSelector((state) => state.user);
     const [users,setUsers] =useState(user)
 
+    const navigate=useNavigate()
+ const dispatch = useDispatch();
       
     
 
@@ -30,6 +34,12 @@ const Navbar=()=>{
 const toggleMenu=()=>{
 
    setMenu(true)
+
+}
+
+const handleLogout=()=>{
+
+    dispatch(clearUser())
 
 }
 
@@ -48,18 +58,34 @@ return(
           <div className="flex justify-between h-16 items-center ">
             <h1 className="text-3xl font-extrabold tracking-tight">Resumi</h1>
             <div className="hidden md:flex space-x-6">
-              <a href="#home" className="text-gray hover:text-teal-300 transition-colors duration-300">Home</a>
+              <a onClick={()=>{navigate("/chat")}} href="#home" className="text-gray hover:text-teal-300 transition-colors duration-300">Home</a>
               <a href="#features" className="text-black hover:text-teal-300 transition-colors duration-300">Features</a>
               <a href="#about" className="text-black hover:text-teal-300 transition-colors duration-300">About</a>
               <a href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-teal-500 text-white px-5 py-2 rounded-full hover:bg-teal-600 transition-colors duration-300"
-               onClick={() => setModalOpen(true)}
-              >
-                Get Started
-              </motion.button>
+{user ? (
+  <div className="flex items-center gap-4">
+    <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>
+    <motion.button
+      whileHover={{ scale: 1.1, backgroundColor: "#f87171" }}
+      whileTap={{ scale: 0.95 }}
+      className="bg-red-500 text-white px-4 py-2 rounded-full shadow hover:bg-red-600 transition-all duration-300"
+      onClick={handleLogout}
+    >
+      Logout
+    </motion.button>
+  </div>
+) : (
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.95 }}
+    className="bg-teal-500 text-white px-5 py-2 rounded-full hover:bg-teal-600 transition-colors duration-300"
+    onClick={() => setModalOpen(true)}
+  >
+    Get Started
+  </motion.button>
+)}
+
+
             </div>
             <div className="md:hidden flex items-center">
               

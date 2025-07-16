@@ -3,10 +3,10 @@ import './App.css'
 import { Toaster } from 'react-hot-toast';
 import InterviewIntro from './Pages/InterviewIntro';
 import Interview from './Pages/InterviewPage';
-
+import ChatComponent from './Pages/ChatContainer';
 
 import Home from './Layouts/Home'
-// import ResultForm from './Components/Resumeform';
+
 
 function App() {
 
@@ -18,8 +18,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/interview-intro" element={<InterviewIntro/>}/>
-        <Route path="/interview/:candidateId" element={<Interview/>}/>
-   
+        <Route path="/interview" element={<Interview/>}/>
+      <Route path="/chat" element={<ChatComponent/>}/>
      
       </Routes>
     </Router>
