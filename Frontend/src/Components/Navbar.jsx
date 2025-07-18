@@ -47,7 +47,7 @@ const handleLogout=()=>{
 return(
     <>
      <motion.nav
-    className="bg-gradient-to-r from-[rgba(239,246,255,0.2)] to-[rgba(204,251,241,0.2)] backdrop-blur-md border border-white/30 text-black fixed w-full z-20 shadow-amber-50"
+    className="bg-gradient-to-r from-[rgba(239,246,255,0.2)] to-[rgba(204,251,241,0.2)] backdrop-blur-md border border-white/30 text-black fixed top-0 w-full z-20 shadow-amber-50"
 
 
         initial="hidden"

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 const InterviewIntro = () => {
   const navigate = useNavigate();
    const user = useSelector((state) => state.user.user);
-   const candidateId=user._id
+  //  const candidateId=user._id
   const handleStart = () => {
     navigate("/interview");
   };
