@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../Redux/userSlice';
 
+import axios from 'axios';
+
 
 
 
@@ -44,6 +46,21 @@ const handleLogout=()=>{
 }
 
 
+const AI=async()=>{
+
+try {
+  console.log("hello ai");
+  
+
+  const res=axios.get("http://localhost:5000/questions")
+  
+} catch (error) {
+  
+}
+
+}
+
+
 return(
     <>
      <motion.nav
@@ -61,7 +78,7 @@ return(
               <a onClick={()=>{navigate("/chat")}} href="#home" className="text-gray hover:text-teal-300 transition-colors duration-300">Home</a>
               <a href="#features" className="text-black hover:text-teal-300 transition-colors duration-300">Features</a>
               <a href="#about" className="text-black hover:text-teal-300 transition-colors duration-300">About</a>
-              <a href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
+              <a onClick={AI} href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
 {user ? (
   <div className="flex items-center gap-4">
     <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>

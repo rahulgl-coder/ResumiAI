@@ -4,6 +4,7 @@ import { SucessModal } from '../Components/InterviewCompletionModal';
 import { InterviewLoader } from '../Components/InterviewLoading';
 import mockQuestions from '../Components/MockQuestion';
 import AssessmentWarning from '../Components/AssesmentWarning';
+import axios from 'axios'
 
 const Interview = () => {
   const [questions, setQuestions] = useState([]);
@@ -37,10 +38,14 @@ const Interview = () => {
   const fetchQuestions = async () => {
     try {
       setIsLoading(true);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setQuestions(mockQuestions);
-      setAnswers(new Array(mockQuestions.length).fill(null));
+      const res= await axios.get("http://localhost:5000/questions")
+ 
+      
+  
+      setQuestions(res.data);
+      console.log(questions);
+      
+      setAnswers(new Array(res.data.length).fill(null));
     } catch (error) {
       console.error('Error fetching questions:', error);
     } finally {
@@ -240,7 +245,7 @@ const Interview = () => {
         </div>
 
         {/* Question Navigation */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-4">
+        {/* <div className="mt-8 bg-white rounded-lg shadow-lg p-4">
           <h4 className="text-sm font-medium text-gray-700 mb-3">Question Overview:</h4>
           <div className="flex flex-wrap gap-2">
             {questions.map((_, index) => (
@@ -258,7 +263,7 @@ const Interview = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
