@@ -43,11 +43,12 @@ const resumeSchema = new mongoose.Schema({
     type: [String],
     enum: ['Remote', 'Hybrid', 'Onsite'],
     default: []
+  },
+  resume:{
+type:String,
+default:null
+
   }
-
-
-
-
 }, 
 
 

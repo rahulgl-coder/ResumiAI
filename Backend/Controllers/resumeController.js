@@ -2,6 +2,7 @@
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const Resume=require('../Models/resumeSchema')
+const {uploadToS3}=require('../utilities/s3Uploads')
 
 
  const resumeParser=async (req, res) => {
@@ -162,13 +163,19 @@ const saveResume = async (req, res) => {
       email
     } = req.body;
 
+    const file = req.file;
+console.log(file);
+
 
     if (
       !userId || !phone || !dob || !skills?.length || !qualifications ||
-      !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length
+      !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length||!file
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
+
+    const s3Response = await uploadToS3(file.buffer, file.originalname, name);
+    const resumeURL = s3Response.Location
 
 
     const newResume = await Resume.create({
@@ -182,10 +189,11 @@ const saveResume = async (req, res) => {
       passoutYear,
       preferredLocation,
       currentLocation,
-      workModes
+      workModes,
+      resume:resumeURL
     });
 
-    console.log("Resume Saved:", newResume);
+
 
     return res.status(201).json({ message: "Resume saved successfully", resume: newResume });
   } catch (error) {

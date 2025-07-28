@@ -20,11 +20,13 @@ const SignInModal = ({ isOpen, onClose }) => {
   password: ''
 });
 
+ const [loading,setLoading]=useState(false)
 const BASEURL=import.meta.env.VITE_BASEURL
 const navigate=useNavigate()
  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
+    setErrors({})
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -76,9 +78,10 @@ const navigate=useNavigate()
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-
-  const isValid = validate();
+   const isValid = validate();
   if (!isValid) return;
+
+  setLoading(true)
 
   const endpoint = isSignUp ? "/auth/signup" : "/auth/signin";
 
@@ -90,6 +93,8 @@ const handleSubmit = async (e) => {
   token: res.data.token
 
 }));
+
+
     
  toast.success(`${isSignUp ? 'Signup' : 'Signin'} successful`);
 
@@ -97,7 +102,13 @@ const handleSubmit = async (e) => {
     
 
   } catch (err) {
-    console.error(`${isSignUp ? 'Signup' : 'Signin'} failed:`, err.response?.data || err.message);
+  
+ 
+    toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
+
+  }finally{
+
+    setLoading(false)
   }
 };
 
@@ -214,12 +225,42 @@ const handleSubmit = async (e) => {
               {errors.password && (
   <p className="text-red-500 text-sm mt-1">{errors.password}</p>
 )}
-              <button
+              {/* <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 {isSignUp ? 'Sign Up' : 'Sign In'}
-              </button>
+              </button> */}
+
+              <button
+     type='submit'
+        disabled={loading}
+        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {loading && (
+          <svg
+            className="w-5 h-5 animate-spin text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v8H4z"
+            ></path>
+          </svg>
+        )}
+        {loading ? 'Processing...' : isSignUp ? 'Signup' : 'Signin'}
+      </button>
             </form>
 
             <div className="flex items-center my-4">

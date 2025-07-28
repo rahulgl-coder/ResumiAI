@@ -4,6 +4,7 @@ const controller=require('../Controllers/interviewController')
 
 
 interviewRoute.get('/questions',controller.mainHandler)
+interviewRoute.post('/interview-submition',controller.saveResult)
 
 
 

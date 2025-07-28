@@ -28,7 +28,7 @@ const Hero = () => {
   };
 
   const handleVerifyResume = async () => {
-console.log(user);
+
 
     if(!user){
       
@@ -142,19 +142,48 @@ console.log(user);
     const error = validateFields();
     if (error) return alert(error);
 
-const data= {...resumeData,
-        skills: userSkills,
-        preferredLocation: userLocation,
-       userId: user._id}
-        console.log(data);
+    
+
+// const data= {...resumeData,
+//         skills: userSkills,
+//         preferredLocation: userLocation,
+//        userId: user._id,
+//       resume:selectedFile}
+      
         
-    try {
-  const res=  await axios.post(`${BASEURL}/save-profile`, data);
+//     try {
+//   const res=  await axios.post(`${BASEURL}/save-profile`, data);
 
 
-      alert('Profile saved successfully!');
-      navigate('/interview-intro')
-      handleModalClose();
+//       alert('Profile saved successfully!');
+//       navigate('/interview-intro')
+//       handleModalClose();
+
+ const formData = new FormData();
+
+  formData.append('resume', selectedFile); // Attach actual file
+  formData.append('userId', user._id);
+  formData.append('name', resumeData.name);
+  formData.append('email', resumeData.email);
+  formData.append('phone', resumeData.phone);
+  formData.append('dob', resumeData.dob);
+  formData.append('passoutYear', resumeData.passoutYear);
+  formData.append('currentLocation', resumeData.currentLocation);
+  userSkills.forEach(skill => formData.append('skills', skill));
+  resumeData.qualifications.forEach(q => formData.append('qualifications', q));
+  userLocation.forEach(loc => formData.append('preferredLocation', loc));
+  resumeData.workModes.forEach(mode => formData.append('workModes', mode));
+
+  try {
+    const res = await axios.post(`${BASEURL}/save-profile`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    alert('Profile saved successfully!');
+    navigate('/interview-intro');
+    handleModalClose();
     } catch (err) {
       console.error(err);
       alert('Error saving profile');

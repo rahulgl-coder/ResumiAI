@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Clock, SkipForward, CheckCircle, Award, Sparkles, CircleDot } from 'lucide-react';
 import { SucessModal } from '../Components/InterviewCompletionModal';
 import { InterviewLoader } from '../Components/InterviewLoading';
-import mockQuestions from '../Components/MockQuestion';
+// import mockQuestions from '../Components/MockQuestion';
 import AssessmentWarning from '../Components/AssesmentWarning';
 import axios from 'axios'
 
@@ -39,13 +39,10 @@ const Interview = () => {
     try {
       setIsLoading(true);
       const res= await axios.get("http://localhost:5000/questions")
- 
-      
-  
-      setQuestions(res.data);
-      console.log(questions);
-      
-      setAnswers(new Array(res.data.length).fill(null));
+     setQuestions(res.data);
+     setAnswers(new Array(res.data.length).fill(null));
+
+
     } catch (error) {
       console.error('Error fetching questions:', error);
     } finally {
@@ -76,11 +73,11 @@ const Interview = () => {
       clearInterval(timerRef.current);
     }
 
-    // Save current answer
+
     const newAnswers = [...answers];
     newAnswers[current] = selectedOption;
     setAnswers(newAnswers);
-    console.log(newAnswers);
+    
     
 
     if (current + 1 >= questions.length) {

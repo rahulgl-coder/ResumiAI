@@ -1,7 +1,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { useState } from 'react';
-import { FaUpload, FaRobot, FaCheckCircle, FaBars, FaTimes } from 'react-icons/fa';
+import {  FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import SignInModal from './Signup';
 import { useSelector } from 'react-redux';
@@ -45,22 +45,6 @@ const handleLogout=()=>{
 
 }
 
-
-const AI=async()=>{
-
-try {
-  console.log("hello ai");
-  
-
-  const res=axios.get("http://localhost:5000/questions")
-  
-} catch (error) {
-  
-}
-
-}
-
-
 return(
     <>
      <motion.nav
@@ -78,8 +62,8 @@ return(
               <a onClick={()=>{navigate("/chat")}} href="#home" className="text-gray hover:text-teal-300 transition-colors duration-300">Home</a>
               <a href="#features" className="text-black hover:text-teal-300 transition-colors duration-300">Features</a>
               <a href="#about" className="text-black hover:text-teal-300 transition-colors duration-300">About</a>
-              <a onClick={AI} href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
-{user ? (
+              <a  href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
+{/* {user ? (
   <div className="flex items-center gap-4">
     <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>
     <motion.button
@@ -100,7 +84,47 @@ return(
   >
     Get Started
   </motion.button>
+)} */}
+{user ? (
+  <div className="relative group">
+    <div className="flex items-center gap-4">
+      <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>
+
+      <div className="relative">
+        {/* Avatar Circle */}
+        <div className="w-10 h-10 rounded-full bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300">
+          {user.name[0]?.toUpperCase()}
+        </div>
+
+        {/* Dropdown */}
+        <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 pointer-events-auto z-50">
+          <button
+            onClick={() => navigate('/profile')}
+            className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-800"
+          >
+            Profile
+          </button>
+          <button
+            onClick={handleLogout}
+            className="block w-full text-left px-4 py-2 hover:bg-red-100 text-red-500"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+) : (
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.95 }}
+    className="bg-teal-500 text-white px-5 py-2 rounded-full hover:bg-teal-600 transition-colors duration-300"
+    onClick={() => setModalOpen(true)}
+  >
+    Get Started
+  </motion.button>
 )}
+
 
 
             </div>

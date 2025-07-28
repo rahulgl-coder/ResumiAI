@@ -2,41 +2,39 @@
 import { useState } from "react";
 import {React} from "react";
 import { Award, Sparkles } from 'lucide-react';
-
+import axios from 'axios'
+import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast'
 
 
 
 export const SucessModal=({score,questions})=>{
-    console.log(questions,"quest");
-    console.log("score",score);
+   
     
     
 
       const [isSubmitting, setIsSubmitting] = useState(false);
-
+      const BASEURL=import.meta.env.VITE_BASEURL
+      const { user } = useSelector((state) => state.user);
+   
 
       const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      
-      // Simulate API submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Prepare submission data
       const submissionData = {
-        answers: answers,
-        score: score,
+        userId:user._id,
+      score: score,
         totalQuestions: questions.length,
         percentage: Math.round((score / questions.length) * 100)
       };
       
-      console.log('Submitting interview data:', submissionData);
-      
-      alert(`Interview submitted successfully! Your score: ${score}/${questions.length}`);
+   
+    const res=await axios.post(`${BASEURL}/interview-submition`,submissionData)
+    toast.success(res.data.message)
       
     } catch (error) {
       console.error('Error submitting interview:', error);
-      alert("Error submitting interview. Please try again.");
+    //  toast.error(error.data.message)
     } finally {
       setIsSubmitting(false);
     }
