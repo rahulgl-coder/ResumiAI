@@ -63,38 +63,36 @@ return(
               <a href="#features" className="text-black hover:text-teal-300 transition-colors duration-300">Features</a>
               <a href="#about" className="text-black hover:text-teal-300 transition-colors duration-300">About</a>
               <a  href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
-{/* {user ? (
-  <div className="flex items-center gap-4">
-    <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>
-    <motion.button
-      whileHover={{ scale: 1.1, backgroundColor: "#f87171" }}
-      whileTap={{ scale: 0.95 }}
-      className="bg-red-500 text-white px-4 py-2 rounded-full shadow hover:bg-red-600 transition-all duration-300"
-      onClick={handleLogout}
-    >
-      Logout
-    </motion.button>
-  </div>
-) : (
-  <motion.button
-    whileHover={{ scale: 1.1 }}
-    whileTap={{ scale: 0.95 }}
-    className="bg-teal-500 text-white px-5 py-2 rounded-full hover:bg-teal-600 transition-colors duration-300"
-    onClick={() => setModalOpen(true)}
-  >
-    Get Started
-  </motion.button>
-)} */}
+
 {user ? (
   <div className="relative group">
     <div className="flex items-center gap-4">
       <p className="text-lg font-semibold text-gray-800">Hi, {user.name}</p>
 
       <div className="relative">
-        {/* Avatar Circle */}
-        <div className="w-10 h-10 rounded-full bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300">
-          {user.name[0]?.toUpperCase()}
-        </div>
+       
+        {/* <div className="w-10 h-10 rounded-full bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300">
+          { user.name[0].toUpperCase()}
+        </div> */}
+    
+<div className="w-10 h-10 rounded-full overflow-hidden bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300 relative">
+  {user?.picture ? (
+    <img
+      src={user.picture}
+      alt="Profile"
+      className="w-full h-full object-cover"
+      onError={(e) => {
+        e.target.style.display = 'none'; // Hide image if it fails
+        e.target.parentNode.textContent = user?.name?.[0]?.toUpperCase() || 'U'; // Show fallback
+      }}
+    />
+  ) : (
+    user?.name?.[0]?.toUpperCase() || 'U'
+  )}
+</div>
+
+
+
 
         {/* Dropdown */}
         <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 pointer-events-auto z-50">

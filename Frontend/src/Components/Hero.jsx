@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast'
 
+
 const Hero = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resumeData, setResumeData] = useState(null);
@@ -33,9 +34,11 @@ const Hero = () => {
     if(!user){
       
      toast.error("Sign In for features")
-     return
+     return}
 
-    }
+     console.log(user);
+     
+    
     if (
       selectedFile &&
       ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(selectedFile.type)
@@ -67,7 +70,7 @@ const Hero = () => {
         alert('Error uploading resume');
       }
     } else {
-      alert('Invalid file type');
+      toast.error('upload a file');
     }
   };
 
@@ -137,58 +140,69 @@ const Hero = () => {
     return null;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const error = validateFields();
-    if (error) return alert(error);
-
-    
-
-// const data= {...resumeData,
-//         skills: userSkills,
-//         preferredLocation: userLocation,
-//        userId: user._id,
-//       resume:selectedFile}
-      
-        
-//     try {
-//   const res=  await axios.post(`${BASEURL}/save-profile`, data);
 
 
-//       alert('Profile saved successfully!');
-//       navigate('/interview-intro')
-//       handleModalClose();
 
- const formData = new FormData();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  formData.append('resume', selectedFile); // Attach actual file
-  formData.append('userId', user._id);
-  formData.append('name', resumeData.name);
-  formData.append('email', resumeData.email);
-  formData.append('phone', resumeData.phone);
-  formData.append('dob', resumeData.dob);
-  formData.append('passoutYear', resumeData.passoutYear);
-  formData.append('currentLocation', resumeData.currentLocation);
-  userSkills.forEach(skill => formData.append('skills', skill));
-  resumeData.qualifications.forEach(q => formData.append('qualifications', q));
-  userLocation.forEach(loc => formData.append('preferredLocation', loc));
-  resumeData.workModes.forEach(mode => formData.append('workModes', mode));
+  const error = validateFields();
+  if (error) return alert(error);
+
+  const data = {
+    ...resumeData,
+    skills: userSkills,
+    preferredLocation: userLocation,
+    userId: user._id,
+    replace: false, // default — no replace
+  };
+
+  const formData = new FormData();
+  formData.append("data", JSON.stringify(data));
+  formData.append("resume", selectedFile);
 
   try {
     const res = await axios.post(`${BASEURL}/save-profile`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        "Content-Type": "multipart/form-data",
+      },
     });
 
-    alert('Profile saved successfully!');
-    navigate('/interview-intro');
-    handleModalClose();
-    } catch (err) {
-      console.error(err);
-      alert('Error saving profile');
+      if (res.data.exists) {
+      const confirmReplace = window.confirm("Resume already exists. Do you want to replace it?");
+      if (confirmReplace) {
+    
+        data.replace = true;
+        const newFormData = new FormData();
+        newFormData.append("data", JSON.stringify(data));
+        newFormData.append("resume", selectedFile);
+
+        const replaceRes = await axios.post(`${BASEURL}/save-profile`, newFormData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        alert("Resume replaced successfully!");
+        navigate("/interview-intro");
+        handleModalClose();
+      } else {
+        alert("Resume upload cancelled.");
+      }
+    } else {
+    
+      alert("Resume uploaded successfully!");
+      navigate("/interview-intro");
+      handleModalClose();
     }
-  };
+
+  } catch (err) {
+    console.error(err);
+    alert("Error saving profile");
+  }
+};
+
+
 
   const removeSkill = (skill) => {
     setUserSkills(userSkills.filter((s) => s !== skill));
@@ -250,7 +264,7 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Modal */}
+  
         {resumeData && (
           <div className="fixed inset-0 bg-stone-950/30 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl relative overflow-y-auto max-h-[90vh]">

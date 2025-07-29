@@ -16,11 +16,17 @@ const userSchema=new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
+     
     },
     role:{
         type:String,
         default:"user"
+    },
+    picture:{
+        type:String
+    },
+    googleId:{
+        type:String
     }
 },
 {timestamps: true})

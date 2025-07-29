@@ -3,8 +3,9 @@ const User=require('../Models/userSchema')
 const bcrypt = require('bcrypt');
 require('dotenv').config
 const jwt=require('jsonwebtoken')
+const { OAuth2Client } = require('google-auth-library');
 
-
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 const generateToken = (user) => {
@@ -13,6 +14,52 @@ const generateToken = (user) => {
     process.env.JWT_SECRET             // secret
      )
 };
+
+
+const googleAuth = async (req, res) => {
+  const { token } = req.body;
+
+  try {
+   
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub } = payload;
+
+   
+    let user = await User.findOne({ email });
+
+
+    if (!user) {
+      user = await User.create({
+        email,
+        name,
+        picture,
+        googleId: sub,
+      });
+    }
+
+    // Generate your own token
+    const jwtToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token: jwtToken,
+      user,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: 'Google authentication failed' });
+  }
+};
+
 
 
 const signUp=async(req,res)=>{
@@ -83,39 +130,6 @@ const signIn = async (req, res) => {
 
 
 
-// const signIn=async(req,res)=>{
-
-//   try {
-
-//     const {email,password}=req.body
-
-//     if(!email||!password) return res.status(400).json({message:"email and password required"})
-     
-     
-//       const user=await User.findOne({email:email})
-//     if(!user) return res.status(400).json({message:"email not found"})
-
-//       const hashedPassword=user.password
-
-//       const isMatch= await bcrypt.compare( password,hashedPassword)
-
-//       if(!isMatch) return res.status(400).json({message:"password donot match"})
 
 
-// return res.status(200).json({message:"user verified succesfully"})
- 
-    
-    
-//   } catch (error) {
-
-//    const message = err.response?.data?.message || "Something went wrong";
-//     toast.error(message); 
-    
-//   }
-
-
-
-// }
-
-
-module.exports={signUp,signIn}
+module.exports={signUp,signIn,googleAuth}

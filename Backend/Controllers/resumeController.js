@@ -147,8 +147,70 @@ const extractDetails = (text) => {
 
 
 
+// const saveResume = async (req, res) => {
+//   try {
+// const parsedData = JSON.parse(req.body.data); // <- Parse from string
+
+// const {
+//   userId,
+//   phone,
+//   dob,
+//   skills,
+//   qualifications,
+//   passoutYear,
+//   preferredLocation,
+//   currentLocation,
+//   workModes,
+//   name,
+//   email
+// } = parsedData;
+
+//     const file = req.file;
+
+
+
+
+//     if (
+//       !userId || !phone || !dob || !skills?.length || !qualifications ||
+//       !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length||!file
+//     ) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const s3Response = await uploadToS3(file.buffer, file.originalname, name);
+//     const resumeURL = s3Response.Location
+
+//     await Resume.findOneAndDelete({userId:userId})
+
+
+//     const newResume = await Resume.create({
+//       userId,
+//       name,
+//       email,
+//       phone,
+//       dob,
+//       skills,
+//       qualifications,
+//       passoutYear,
+//       preferredLocation,
+//       currentLocation,
+//       workModes,
+//       resume:resumeURL
+//     });
+
+
+
+//     return res.status(201).json({ message: "Resume saved successfully", resume: newResume });
+//   } catch (error) {
+//     console.error("Save Resume Error:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
+
+
 const saveResume = async (req, res) => {
   try {
+    const parsedData = JSON.parse(req.body.data);
     const {
       userId,
       phone,
@@ -160,23 +222,36 @@ const saveResume = async (req, res) => {
       currentLocation,
       workModes,
       name,
-      email
-    } = req.body;
+      email,
+      replace 
+    } = parsedData;
+ 
+    
 
     const file = req.file;
-console.log(file);
-
 
     if (
       !userId || !phone || !dob || !skills?.length || !qualifications ||
-      !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length||!file
+      !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length || !file
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const s3Response = await uploadToS3(file.buffer, file.originalname, name);
-    const resumeURL = s3Response.Location
+    const existingResume = await Resume.findOne({ userId });
 
+    if (existingResume && !replace) {
+      return res.status(200).json({ 
+        message: "Resume already exists", 
+        exists: true 
+      });
+    }
+
+    if (existingResume && replace) {
+      await Resume.findOneAndDelete({ userId });
+    }
+
+    const s3Response = await uploadToS3(file.buffer, file.originalname, name);
+    const resumeURL = s3Response.Location;
 
     const newResume = await Resume.create({
       userId,
@@ -190,10 +265,8 @@ console.log(file);
       preferredLocation,
       currentLocation,
       workModes,
-      resume:resumeURL
+      resume: resumeURL
     });
-
-
 
     return res.status(201).json({ message: "Resume saved successfully", resume: newResume });
   } catch (error) {
@@ -201,6 +274,7 @@ console.log(file);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 
 

@@ -45,7 +45,7 @@ const About=()=>{
             </motion.button>
           </div>
           <motion.img
-            src="https://images.unsplash.com/photo-1522202176988-66273c2b6a27?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+            src="https://www.myperfectresume.com/wp-content/uploads/2019/09/how-to-write-ats-friendly-resume.png  "
             alt="Career Journey"
             className="md:w-1/2 mt-8 md:mt-0 md:ml-8 rounded-xl shadow-2xl"
             initial={{ opacity: 0, x: 20 }}

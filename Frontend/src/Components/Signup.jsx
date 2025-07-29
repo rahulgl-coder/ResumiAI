@@ -6,6 +6,9 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../Redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast'
+import GoogleLoginButton from './GoogleLogin'; 
+
+
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(true);
@@ -20,10 +23,10 @@ const SignInModal = ({ isOpen, onClose }) => {
   password: ''
 });
 
- const [loading,setLoading]=useState(false)
+const [loading,setLoading]=useState(false)
 const BASEURL=import.meta.env.VITE_BASEURL
 const navigate=useNavigate()
- const dispatch = useDispatch();
+const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     setErrors({})
@@ -46,40 +49,26 @@ const navigate=useNavigate()
         newErrors.name="Name required"
        }else if(!nameRegex.test(formData.name)&&isSignUp){
         newErrors.name = 'Name should contain only letters and spaces (2–50 characters)';
-    
-
-     }
+       }
 
      if(!formData.email){
         newErrors.email="Email required"
      }else if(!emailRegex.test(formData.email)){
          newErrors.email="Provide a valid email format"
      }
-
-
-     if(!formData.password){
+    if(!formData.password){
         newErrors.password='Password required'
      }else if(!passwordRegex.test(formData.password)){
        newErrors.password = 'Password must include uppercase, lowercase, number, and special character';
      }
-
-      setErrors(newErrors);
-
-
- 
+     setErrors(newErrors);
      return Object.values(newErrors).every(error => error === '');
-    
+    }
 
-}
-
- 
-
-
-
-const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
    const isValid = validate();
-  if (!isValid) return;
+   if (!isValid) return;
 
   setLoading(true)
 
@@ -93,22 +82,15 @@ const handleSubmit = async (e) => {
   token: res.data.token
 
 }));
-
-
+toast.success(`${isSignUp ? 'Signup' : 'Signin'} successful`);
+onClose();
     
- toast.success(`${isSignUp ? 'Signup' : 'Signin'} successful`);
-
-    onClose();
-    
-
-  } catch (err) {
+} catch (err) {
   
- 
-    toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
+  toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
 
   }finally{
-
-    setLoading(false)
+ setLoading(false)
   }
 };
 
@@ -225,14 +207,7 @@ const handleSubmit = async (e) => {
               {errors.password && (
   <p className="text-red-500 text-sm mt-1">{errors.password}</p>
 )}
-              {/* <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {isSignUp ? 'Sign Up' : 'Sign In'}
-              </button> */}
-
-              <button
+                   <button
      type='submit'
         disabled={loading}
         className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded disabled:opacity-60 disabled:cursor-not-allowed"
@@ -269,13 +244,20 @@ const handleSubmit = async (e) => {
               <div className="flex-grow h-px bg-gray-300"></div>
             </div>
 
-            <button
-              onClick={handleGoogleAuth}
-              className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <FcGoogle size={24} />
-              {isSignUp ? 'Sign Up with Google' : 'Sign In with Google'}
-            </button>
+          <div className="w-full flex items-center justify-center">
+  <GoogleLoginButton
+    buttonText={isSignUp ? "Sign In with Google" : "Sign Up  with Google"}
+    onSuccessLogin={(data) => {
+      dispatch(setUser({
+        user: data.user,
+        token: data.token,
+      }));
+      toast.success("Google Sign In successful");
+      onClose();
+      navigate("/");
+    }}
+  />
+</div>
 
             <p className="mt-4 text-center text-sm text-gray-600">
               {isSignUp ? 'Already have an account?' : "Don't have an account?"}

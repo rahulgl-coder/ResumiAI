@@ -5,19 +5,24 @@ import { InterviewLoader } from '../Components/InterviewLoading';
 // import mockQuestions from '../Components/MockQuestion';
 import AssessmentWarning from '../Components/AssesmentWarning';
 import axios from 'axios'
+import { useSelector } from 'react-redux';
 
 const Interview = () => {
+    const { user } = useSelector((state) => state.user);
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(15);
   const [isLoading, setIsLoading] = useState(true);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
+  const BASEURL=import.meta.env.VITE_BASEURL
   
   const timerRef = useRef(null);
 
+ 
+  
 
   useEffect(() => {
     fetchQuestions();
@@ -38,7 +43,7 @@ const Interview = () => {
   const fetchQuestions = async () => {
     try {
       setIsLoading(true);
-      const res= await axios.get("http://localhost:5000/questions")
+      const res= await axios.get(`${BASEURL}/questions/${user._id}`)
      setQuestions(res.data);
      setAnswers(new Array(res.data.length).fill(null));
 
@@ -55,7 +60,7 @@ const Interview = () => {
       clearInterval(timerRef.current);
     }
     
-    setTimeLeft(10);
+    setTimeLeft(15);
     
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
@@ -140,7 +145,7 @@ const Interview = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
+      
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Technical Interview</h1>
           <p className="text-gray-600">Choose the correct answer for each question. You have 10 seconds per question.</p>

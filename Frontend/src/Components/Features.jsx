@@ -61,9 +61,9 @@ const Features=()=>{
             >
               <FaRobot className="text-blue-600 text-5xl mb-4 mx-auto" />
               <h3 className="text-2xl font-semibold text-gray-800 mb-3">AI-Powered Verification</h3>
-              <p className="text-gray-600 mb-4">Our AI verifies your student status quickly and accurately.</p>
+              <p className="text-gray-600 mb-4">Our AI verifies your resume quickly and accurately.</p>
               <img
-                src="https://images.unsplash.com/photo-1516321310762-4792b2a67df3?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+                src="https://itchronicles.com/wp-content/uploads/2020/11/where-is-ai-used.jpg"
                 alt="AI Verification"
                 className="w-full rounded-lg"
               />
@@ -78,7 +78,7 @@ const Features=()=>{
               <h3 className="text-2xl font-semibold text-gray-800 mb-3">Secure & Reliable</h3>
               <p className="text-gray-600 mb-4">Your data is protected with top-notch security protocols.</p>
               <img
-                src="https://images.unsplash.com/photo-1516321310762-4792b2a67df3?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
+                src="https://tse1.mm.bing.net/th/id/OIP.vg4vAOt2-yMoMFm-TG0M6gHaFP?pid=Api&P=0&h=180"
                 alt="Security"
                 className="w-full rounded-lg"
               />

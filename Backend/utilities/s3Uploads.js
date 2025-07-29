@@ -11,6 +11,10 @@ const s3Client = new S3Client({
   },
 });
 
+
+
+
+
 function generateReadableFilename(originalName, name) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const cleanName = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
@@ -22,9 +26,9 @@ const uploadToS3 = async (fileBuffer, originalName, name) => {
   const Key = generateReadableFilename(originalName, name);
 
   const uploadParams = {
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket:process.env.AWS_BUCKET_NAME,
     Key,
-    Body: fileBuffer,
+    Body:fileBuffer,
     ContentType: 'application/pdf',
     ACL: 'public-read',
   };
@@ -35,7 +39,7 @@ const uploadToS3 = async (fileBuffer, originalName, name) => {
     await s3Client.send(command);
 
     return {
-      Location: `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${Key}`,
+      Location: `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${Key}`,
       Key,
     };
   } catch (error) {
