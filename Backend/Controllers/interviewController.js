@@ -4,6 +4,8 @@ const OpenAI= require('openai')
 const InterviewResult=require('../Models/interviewResult')
 const Resume=require('../Models/resumeSchema')
 
+require('dotenv').config
+
 
 
 
@@ -45,7 +47,7 @@ const Resume=require('../Models/resumeSchema')
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: "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",
+  apiKey:process.env.OPEN_ROUTER_KEY ,
   defaultHeaders: {
     "HTTP-Referer": "<YOUR_SITE_URL>", // Optional. Site URL for rankings on openrouter.ai.
     "X-Title": "<YOUR_SITE_NAME>", // Optional. Site title for rankings on openrouter.ai.
