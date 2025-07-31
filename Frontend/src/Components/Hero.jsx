@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast'
 
 
+
 const Hero = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [resumeData, setResumeData] = useState(null);
@@ -15,6 +16,7 @@ const Hero = () => {
   const [skill, setSkill] = useState('');
   const [location, setLocation] = useState('');
   const [userLocation, setUserLocation] = useState([]);
+ 
   const user = useSelector((state) => state.user.user);
   const token=useSelector((state)=>state.user.token)
   const navigate=useNavigate()
@@ -37,8 +39,8 @@ const Hero = () => {
      toast.error("Sign In for features")
      return}
 
-     console.log(user);
-     
+ 
+        
     
     if (
       selectedFile &&

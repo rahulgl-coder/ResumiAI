@@ -12,6 +12,10 @@ import GoogleLoginButton from './GoogleLogin';
 
 const SignInModal = ({ isOpen, onClose }) => {
   const [isSignUp, setIsSignUp] = useState(true);
+  const [showLink,setShowLink]=useState(false)
+  const [countdown, setCountdown] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -65,6 +69,19 @@ const dispatch = useDispatch();
      return Object.values(newErrors).every(error => error === '');
     }
 
+    const startCountdown = () => {
+  let timeLeft = 20;
+  const timer = setInterval(() => {
+    timeLeft -= 1;
+    setCountdown(timeLeft);
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      setCanResend(true);
+    }
+  }, 1000);
+};
+
+
  const handleSubmit = async (e) => {
   e.preventDefault();
    const isValid = validate();
@@ -84,18 +101,43 @@ const dispatch = useDispatch();
   token: res.data.token
 
 }));
+onClose()
+}
+if (isSignUp) {
+      setShowLink(true);
+      setCountdown(30); 
+      setCanResend(false); 
+      startCountdown(); 
     }
-toast.success(`${isSignUp ? 'Link is sended the mail' : 'Signin'} successful`);
-onClose();
-    
+
+
+toast.success(`${isSignUp ? 'Link is sended to the mail' : 'Signin'} successful`);
+
+
 } catch (err) {
   
-  toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
+toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
 
   }finally{
  setLoading(false)
   }
 };
+
+
+const handleResend = async () => {
+  try {
+    setCanResend(false);
+    setCountdown(30);
+    startCountdown();
+
+    await axios.post(`${BASEURL}/auth/resend-link`, { email: formData.email });
+
+    toast.success('Verification link resent successfully');
+  } catch (err) {
+    toast.error(err.response?.data?.msg || "Failed to resend verification link");
+  }
+};
+
 
 
   const modalVariants = {
@@ -236,6 +278,18 @@ onClose();
         {loading ? 'Processing...' : isSignUp ? 'Signup' : 'Signin'}
       </button>
             </form>
+{showLink && (
+  <div style={{ marginTop: "1rem" }}>
+    {canResend ? (
+      <button onClick={handleResend} className="btn btn-link">
+        🔁 Resend Verification Link
+      </button>
+    ) : (
+      <p>⏳ You can resend the link in {countdown}s</p>
+    )}
+  </div>
+)}
+
 
             <div className="flex items-center my-4">
               <div className="flex-grow h-px bg-gray-300"></div>
@@ -249,7 +303,7 @@ onClose();
     onSuccessLogin={(data) => {
       dispatch(setUser({
         user: data.user,
-        token: data.token,
+        token: data.tok,
       }));
       toast.success("Google Sign In successful");
       onClose();

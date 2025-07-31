@@ -4,24 +4,21 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { setUser } from '../Redux/userSlice';
+import { useDispatch } from 'react-redux';
 
 
 const GoogleLoginButton = ({ buttonText = "Sign In with Google", onSuccessLogin }) => {
+  const dispatch=useDispatch()
   const handleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
-      console.log("Decoded User Info:", decoded);
+      
 
       const res = await axios.post('http://localhost:5000/auth/google', {
         token: credentialResponse.credential,
       });
-       dispatch(setUser({
-        user: res.data.user,
-        token: res.data.token
-      
-      }));
-
-      if (onSuccessLogin) {
+ 
+ if (onSuccessLogin) {
         onSuccessLogin(res.data);
       }
     } catch (err) {

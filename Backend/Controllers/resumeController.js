@@ -41,7 +41,7 @@ const {uploadToS3}=require('../utilities/s3Uploads')
  data.email=email
  data.phone=phone
 
- console.log(data);
+ 
  
 
  
@@ -229,8 +229,8 @@ const saveResume = async (req, res) => {
     
 
     const file = req.file;
-
-    if (
+  
+if (
       !userId || !phone || !dob || !skills?.length || !qualifications ||
       !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length || !file
     ) {
@@ -238,6 +238,9 @@ const saveResume = async (req, res) => {
     }
 
     const existingResume = await Resume.findOne({ userId });
+
+   
+    
 
     if (existingResume && !replace) {
       return res.status(200).json({ 

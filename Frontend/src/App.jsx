@@ -11,9 +11,11 @@ import VerifyEmailPage from './Pages/VerifyEmailPage';
 import Home from './Layouts/Home'
 import ProtectedRoute from './Components/ProtectedRoute';
 import Unauthorized from './Pages/Unauthorized';
-
+import { persistor } from './Redux/store'; 
+import { useEffect } from 'react';
 
 function App() {
+
 
 
   return (

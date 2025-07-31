@@ -2,45 +2,14 @@
 
 const OpenAI= require('openai') 
 const InterviewResult=require('../Models/interviewResult')
-const Resume=require('../Models/resumeSchema')
+const Resume=require('../Models/resumeSchema');
+const { LoginTicket } = require('google-auth-library');
 
 require('dotenv').config
 
 
 
 
-//     const openai = new OpenAI({
-//       baseURL: 'https://openrouter.ai/api/v1',
-//       apiKey:"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",
-//       defaultHeaders: {
-//         'HTTP-Referer': 'http://localhost:3000', 
-//         'X-Title': 'MCQ Generator',              
-//       },
-//     });
-    
-//  const mainHandler = async (req, res) => {
-//       try {
-//         const skills = ["JavaScript", "React", "Node.js"];
-
-        
-
-
-//     const fetch=async()=>{
-
-    
-//         const completion = await openai.chat.completions.create({
-//           model: 'mistralai/mistral-7b-instruct', // or 'openai/gpt-4o' if allowed
-//           messages: [{ role: 'user', content:prompt}],
-//         });
-    
-//         const content = completion.choices[0].message.content;
-//         console.log(content);
-        
-
-
-//  return content
-       
-//     }
 
 
 
@@ -59,8 +28,14 @@ const getSkills=async(id)=>{
   let skills=[]
 
   try {
+   
+    
     const resume=await Resume.findOne({userId:id})
+     console.log(id);
      skills=resume.skills
+ 
+  
+     
   } catch (error) {
     console.log(error);
     
@@ -70,14 +45,18 @@ const getSkills=async(id)=>{
 }
 
 
- 
+
 
  const mainHandler=async(req,res)=>{
 
-  const id=req.user.userId
-  console.log(id);
+  const id=req.user.id
+
+  
+ 
   
   const skills= await getSkills(id)
+
+  
   
   
 
