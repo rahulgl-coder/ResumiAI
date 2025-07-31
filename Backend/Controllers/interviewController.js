@@ -57,10 +57,8 @@ const getSkills=async(id)=>{
   let skills=[]
 
   try {
-
     const resume=await Resume.findOne({userId:id})
      skills=resume.skills
-    
   } catch (error) {
     console.log(error);
     
@@ -74,7 +72,9 @@ const getSkills=async(id)=>{
 
  const mainHandler=async(req,res)=>{
 
-  const{id}=req.params
+  const id=req.user.userId
+  console.log(id);
+  
   const skills= await getSkills(id)
   
   

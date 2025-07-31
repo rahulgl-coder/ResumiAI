@@ -15,7 +15,7 @@ export const SucessModal=({score,questions})=>{
 
       const [isSubmitting, setIsSubmitting] = useState(false);
       const BASEURL=import.meta.env.VITE_BASEURL
-      const { user } = useSelector((state) => state.user);
+      const { user,token } = useSelector((state) => state.user);
    
 
       const handleSubmit = async () => {
@@ -23,13 +23,18 @@ export const SucessModal=({score,questions})=>{
       setIsSubmitting(true);
       const submissionData = {
         userId:user._id,
-      score: score,
+        score: score,
         totalQuestions: questions.length,
         percentage: Math.round((score / questions.length) * 100)
       };
       
    
-    const res=await axios.post(`${BASEURL}/interview-submition`,submissionData)
+    const res=await axios.post(`${BASEURL}/interview-submition`,submissionData,{
+      headers: {
+                Authorization: `Bearer ${token}`,
+    
+      },
+    })
     toast.success(res.data.message)
       
     } catch (error) {

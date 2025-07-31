@@ -16,6 +16,7 @@ const Hero = () => {
   const [location, setLocation] = useState('');
   const [userLocation, setUserLocation] = useState([]);
   const user = useSelector((state) => state.user.user);
+  const token=useSelector((state)=>state.user.token)
   const navigate=useNavigate()
 
 
@@ -48,7 +49,9 @@ const Hero = () => {
 
       try {
         const res = await axios.post(`${BASEURL}/upload-resume`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { 'Content-Type': 'multipart/form-data',
+           Authorization: `Bearer ${token}`,
+           },
         });
 
         const data = res.data;
@@ -154,7 +157,7 @@ const handleSubmit = async (e) => {
     skills: userSkills,
     preferredLocation: userLocation,
     userId: user._id,
-    replace: false, // default — no replace
+    replace: false, 
   };
 
   const formData = new FormData();
@@ -165,6 +168,8 @@ const handleSubmit = async (e) => {
     const res = await axios.post(`${BASEURL}/save-profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+    
       },
     });
 

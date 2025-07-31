@@ -8,7 +8,7 @@ import axios from 'axios'
 import { useSelector } from 'react-redux';
 
 const Interview = () => {
-    const { user } = useSelector((state) => state.user);
+    const { user,token } = useSelector((state) => state.user);
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -43,7 +43,12 @@ const Interview = () => {
   const fetchQuestions = async () => {
     try {
       setIsLoading(true);
-      const res= await axios.get(`${BASEURL}/questions/${user._id}`)
+      const res= await axios.get(`${BASEURL}/questions/${user._id}`,{
+      headers: {
+               Authorization: `Bearer ${token}`,
+    
+      },
+    });
      setQuestions(res.data);
      setAnswers(new Array(res.data.length).fill(null));
 

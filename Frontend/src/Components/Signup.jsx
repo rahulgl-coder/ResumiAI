@@ -77,12 +77,15 @@ const dispatch = useDispatch();
 
   try {
     const res = await axios.post(`${BASEURL}${endpoint}`, formData);
+
+    if(!isSignUp){
     dispatch(setUser({
   user: res.data.user,
   token: res.data.token
 
 }));
-toast.success(`${isSignUp ? 'Signup' : 'Signin'} successful`);
+    }
+toast.success(`${isSignUp ? 'Link is sended the mail' : 'Signin'} successful`);
 onClose();
     
 } catch (err) {
@@ -94,10 +97,6 @@ onClose();
   }
 };
 
-  const handleGoogleAuth = () => {
-    // Implement Google Auth logic here
-    console.log('Google Auth triggered');
-  };
 
   const modalVariants = {
     hidden: { opacity: 0, scale: 0.8 },

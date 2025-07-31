@@ -3,7 +3,7 @@ import userReducer from './userSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import { combineReducers } from 'redux';
-// import { thunk } from 'redux-thunk'; // ✅ FIXED
+
 
 const persistConfig = {
   key: 'root',
