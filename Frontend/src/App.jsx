@@ -1,18 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css'
-import { Toaster } from 'react-hot-toast';
+
+import Home from './Layouts/Home'
 import InterviewIntro from './Pages/InterviewIntro';
 import Interview from './Pages/InterviewPage';
 import ChatComponent from './Pages/ChatContainer';
-import AdminPanel from './Pages/AdiminPage';
 import Profile from './Pages/Profile';
 import VerifyEmailPage from './Pages/VerifyEmailPage';
 
-import Home from './Layouts/Home'
+import ManageSkillPage from './Pages/AdminPage/ManageSylubus';
+
+
 import ProtectedRoute from './Components/ProtectedRoute';
 import Unauthorized from './Pages/Unauthorized';
-import { persistor } from './Redux/store'; 
-import { useEffect } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 
@@ -35,7 +36,7 @@ function App() {
       </Route>    
 
     <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-        <Route path='/admin'element={<AdminPanel/>}/>
+        <Route path='/admin'element={<ManageSkillPage/>}/>
       </Route>
 
 

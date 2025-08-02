@@ -3,8 +3,7 @@
 const OpenAI= require('openai') 
 const InterviewResult=require('../Models/interviewResult')
 const Resume=require('../Models/resumeSchema');
-const { LoginTicket } = require('google-auth-library');
-
+const SkillQuestionaire = require("../Models/questionaireSchema");
 require('dotenv').config
 
 
@@ -31,8 +30,7 @@ const getSkills=async(id)=>{
    
     
     const resume=await Resume.findOne({userId:id})
-     console.log(id);
-     skills=resume.skills
+    skills=resume.skills
  
   
      
@@ -50,16 +48,7 @@ const getSkills=async(id)=>{
  const mainHandler=async(req,res)=>{
 
   const id=req.user.id
-
-  
- 
-  
   const skills= await getSkills(id)
-
-  
-  
-  
-
   const prompt=`Generate a total of 20 multiple-choice questions in a mixed order from the skills:${skills.join(", ")}.
 
  Each question must be a JSON object with the following structure:
@@ -83,13 +72,22 @@ const getSkills=async(id)=>{
       ],
     });
 
-    const raw = completion.choices[0]?.message?.content;
+    let raw = completion.choices[0]?.message?.content || "";
 
-   
+    // ✅ Clean markdown/code block wrappers like ```json ... ```
+    raw = raw.trim();
+    if (raw.startsWith("```")) {
+      raw = raw.replace(/```(?:json)?/g, "").replace(/```/g, "").trim();
+    }
+
+
+    // ✅ Sometimes fancy quotes cause issues
+    raw = raw.replace(/[“”‘’]/g, '"');
+
     const data = JSON.parse(raw);
-   
+
     
-    return res.status(201).json(data);
+    return res.status(201).json({questions:data});
 
   } catch (error) {
     console.error("Error fetching MCQs:", error.response?.data || error.message);
@@ -125,7 +123,93 @@ const saveResult = async (req, res) => {
   }
 };
 
+const questionDatabase = async (req, res) => {
+  try {
+    const id = req.user.id;
+    const skills = await getSkills(id);
+     
+    const questions = await getQuestionsDatabase(skills);
+   
+    
+
+    return res.status(200).json({ success: true, questions });
+  } catch (error) {
+    console.error("Error in quest controller:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
 
 
-    module.exports={mainHandler,saveResult}
+const getQuestionsDatabase = async (skills) => {
+  try {
+    const normalizedSkills = skills
+      .map(skill => {
+        const clean = skill.trim().toLowerCase();
+        return skillSynonyms[clean];
+      })
+      .filter(Boolean); 
+
+    if (!normalizedSkills.length) {
+      console.log("No valid normalized skills found");
+      return [];
+    }
+
+    const docs = await SkillQuestionaire.find({
+      skill: { $in: normalizedSkills }
+    });
+
+     const allQuestions = docs.flatMap(doc => doc.questions);
+
+    if (allQuestions.length === 0) {
+      console.log("No questions found for the provided skills");
+      return [];
+    }
+
+    const shuffledQuestions = allQuestions.sort(() => 0.5 - Math.random());
+
+    return shuffledQuestions.slice(0, 25);
+
+  } catch (err) {
+    console.error("Error in getQuestionsDatabase:", err);
+    return [];
+  }
+};
+
+
+ const skillSynonyms = {
+      'node.js': 'Node',
+      'node js': 'Node',
+      'node': 'Node',
+      'nodejs': 'Node',
+
+      'js': 'javascript',
+      'java script': 'javascript',
+      'javascript': 'javascript',
+
+      'reactjs': 'React',
+      'react.js': 'React',
+      'react': 'React',
+
+      'mongo': 'MongoDB',
+      'mongodb': 'MongoDB',
+
+      'express.js': 'Express',
+      'express': 'Express',
+
+      'c plus plus': 'C++',
+      'cpp': 'C++',
+
+      'sql': 'SQL',
+      'postman': 'Postman',
+      'git': 'Git',
+      'java': 'Java'
+    };
+
+
+
+
+
+
+
+    module.exports={mainHandler,saveResult,questionDatabase}
  

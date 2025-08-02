@@ -4,8 +4,9 @@ const controller=require('../Controllers/interviewController')
 const authorizeRoles=require('../Middleware/middleware')
 
 
-interviewRoute.get('/questions/:id',authorizeRoles('user','admin'),controller.mainHandler)
+interviewRoute.get('/questions',authorizeRoles('user','admin'),controller.mainHandler)
 interviewRoute.post('/interview-submition',authorizeRoles('user','admin'),controller.saveResult)
+interviewRoute.get('/questions/backup',authorizeRoles('user','admin'),controller.questionDatabase)
 
 
 

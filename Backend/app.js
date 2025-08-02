@@ -6,7 +6,7 @@ require('dotenv').config()
 const dbConnect=require("./Database/dbConnect")
 const PORT=process.env.PORT
 
-
+const adminRoute=require('./Routes/adminRoutes')
 const resumeRoute = require('./Routes/resumRoute');
 const userRoute=require('./Routes/authRoutes')
 const interviewRoute=require('./Routes/interviewRoute')
@@ -23,6 +23,7 @@ app.use(cors({
 
 app.use(express.json())
 app.use('/auth',userRoute)
+app.use('/admin',adminRoute)
 app.use(resumeRoute)
 app.use(interviewRoute)
 

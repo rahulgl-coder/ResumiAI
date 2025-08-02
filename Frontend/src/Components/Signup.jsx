@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FcGoogle } from 'react-icons/fc';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../Redux/userSlice';

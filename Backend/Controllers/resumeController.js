@@ -3,6 +3,7 @@ const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const Resume=require('../Models/resumeSchema')
 const {uploadToS3}=require('../utilities/s3Uploads')
+const supabase =require('../utilities/supabaseClient')
 
 
  const resumeParser=async (req, res) => {
@@ -147,65 +148,6 @@ const extractDetails = (text) => {
 
 
 
-// const saveResume = async (req, res) => {
-//   try {
-// const parsedData = JSON.parse(req.body.data); // <- Parse from string
-
-// const {
-//   userId,
-//   phone,
-//   dob,
-//   skills,
-//   qualifications,
-//   passoutYear,
-//   preferredLocation,
-//   currentLocation,
-//   workModes,
-//   name,
-//   email
-// } = parsedData;
-
-//     const file = req.file;
-
-
-
-
-//     if (
-//       !userId || !phone || !dob || !skills?.length || !qualifications ||
-//       !passoutYear || !preferredLocation?.length || !currentLocation || !workModes?.length||!file
-//     ) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
-
-//     const s3Response = await uploadToS3(file.buffer, file.originalname, name);
-//     const resumeURL = s3Response.Location
-
-//     await Resume.findOneAndDelete({userId:userId})
-
-
-//     const newResume = await Resume.create({
-//       userId,
-//       name,
-//       email,
-//       phone,
-//       dob,
-//       skills,
-//       qualifications,
-//       passoutYear,
-//       preferredLocation,
-//       currentLocation,
-//       workModes,
-//       resume:resumeURL
-//     });
-
-
-
-//     return res.status(201).json({ message: "Resume saved successfully", resume: newResume });
-//   } catch (error) {
-//     console.error("Save Resume Error:", error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
 
 
 const saveResume = async (req, res) => {
@@ -253,8 +195,28 @@ if (
       await Resume.findOneAndDelete({ userId });
     }
 
-    const s3Response = await uploadToS3(file.buffer, file.originalname, name);
-    const resumeURL = s3Response.Location;
+    // const s3Response = await uploadToS3(file.buffer, file.originalname, name);
+    // const resumeURL = s3Response.Location;
+
+     const fileName = `resumes/${userId}-${Date.now()}-${file.originalname}`;
+
+    const { data, error } = await supabase.storage
+      .from("resume") // your bucket name
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+      });
+
+    if (error) {
+      console.error("Supabase Upload Error:", error);
+      return res.status(500).json({ message: "Resume upload failed" });
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("resume")
+      .getPublicUrl(fileName);
+
+    const resumeURL = publicUrlData.publicUrl;
+  
 
     const newResume = await Resume.create({
       userId,

@@ -40,6 +40,7 @@ const googleAuth = async (req, res) => {
         name,
         picture,
         googleId: sub,
+        isVerified:true
        
       });
     }
@@ -130,9 +131,12 @@ const signIn = async (req, res) => {
     if(!user.password){
       return res.status(400).json({message:"Sign Up First"})
     }
+    if(!user.isVerified){
+      return res.status(401).json({message:"user not verified"})
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log(isMatch);
+
     
     if (!isMatch)
       return res.status(401).json({ message: "Password does not match" });

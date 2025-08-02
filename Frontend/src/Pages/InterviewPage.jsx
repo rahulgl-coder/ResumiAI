@@ -18,6 +18,7 @@ const Interview = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
   const BASEURL=import.meta.env.VITE_BASEURL
+    const alreadyCalled = useRef(false);
   
   const timerRef = useRef(null);
 
@@ -26,6 +27,8 @@ const Interview = () => {
   
 
   useEffect(() => {
+    if (alreadyCalled.current) return;
+    alreadyCalled.current = true;
     fetchQuestions();
   }, []);
 
@@ -41,25 +44,41 @@ const Interview = () => {
     };
   }, [current, questions.length]);
 
-  const fetchQuestions = async () => {
+const fetchQuestions = async () => {
+  try {
+    setIsLoading(true);
+
+    let res;
+
+   
     try {
-      setIsLoading(true);
-      const res= await axios.get(`${BASEURL}/questions/${user._id}`,{
-      headers: {
-               Authorization: `Bearer ${token}`,
-    
-      },
-    });
-     setQuestions(res.data);
-     setAnswers(new Array(res.data.length).fill(null));
+      res = await axios.get(`${BASEURL}/questions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (!res.data || !res.data.questions || res.data.questions.length === 0) {
+        throw new Error('Invalid or empty response from /questions');
+      }
+    } catch (err) {
+      console.warn('Primary endpoint failed. Using backup.');
 
-    } catch (error) {
-      console.error('Error fetching questions:', error);
-    } finally {
-      setIsLoading(false);
+      res = await axios.get(`${BASEURL}/questions/backup`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     }
-  };
+    setQuestions(res.data.questions);
+    setAnswers(new Array(res.data.questions.length).fill(null));
+  } catch (error) {
+    console.error('Error fetching questions from both sources:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const startTimer = () => {
     if (timerRef.current) {
