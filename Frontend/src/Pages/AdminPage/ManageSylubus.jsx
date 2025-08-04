@@ -4,7 +4,6 @@ import Navbar from '../../Components/Navbar';
 import ManageSkills from '../../Components/AdminComponents/ManageSkills';
 import ViewQuestions from '../../Components/AdminComponents/ViewQuestions';
 import SetQuestions from '../../Components/AdminComponents/SetQuestions';
-
 import axios from 'axios'
 import { useSelector } from 'react-redux';
 
@@ -20,6 +19,13 @@ const ManageSkillPage = () => {
     options: ['', '', '', '', ''],
     correctAnswer: 0,
   });
+const [errors, setErrors] = useState({
+  skill: '',
+  question: '',
+  options: ['', '', '', '', ''],
+  correctAnswer: '',
+});
+
   const [showSuccess, setShowSuccess] = useState(false);
   const BASEURL= import.meta.env.VITE_BASEURL
 
@@ -54,46 +60,93 @@ const addSkill = async () => {
 
 
   const deleteSkill = (skill) => {
-    setSkills(skills.filter((s) => s !== skill));
-    setQuestions(questions.filter((q) => q.skill !== skill));
-  };
-
-  const addQuestion =async () => {
-    if (
-      newQuestion.skill &&
-      newQuestion.question &&
-      newQuestion.options.every((opt) => opt) &&
-      newQuestion.correctAnswer >= 0 &&
-      newQuestion.correctAnswer < newQuestion.options.length
-    ) {
-       
-  const res=await axios.post(`${BASEURL}/admin/save_question`,{question:questions},{
-            headers: {
+  
+  try {
+     const res = await axios.post(
+        `${BASEURL}/admin/skill`,
+         skill,
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
           },
-        })
-        
-      setQuestions([
-        ...questions,
-        {
-          id: questions.length + 1,
-          ...newQuestion,
-        },
-      ]);
-      setNewQuestion({
-        skill: '',
-        question: '',
-        options: ['', '', '', '', ''],
-        correctAnswer: 0,
-      });
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 2000);
-    }
+        }
+      );
+ setSkills(skills.filter((s) => s !== skill));
+    
+  } catch (error) {
+    
+  }  
+   
+    
   };
 
-  const deleteQuestion = (id) => {
-    setQuestions(questions.filter((q) => q.id !== id));
+   const validate = () => {
+  const newErrors = {
+    skill: '',
+    question: '',
+    options: ['', '', '', '', ''],
+    correctAnswer: '',
   };
+  let isValid = true;
+
+  if (!newQuestion.skill.trim()) {
+    newErrors.skill = 'Skill is required';
+    isValid = false;
+  }
+
+  if (!newQuestion.question.trim()) {
+    newErrors.question = 'Question is required';
+    isValid = false;
+  }
+
+  newQuestion.options.forEach((opt, idx) => {
+    if (!opt.trim()) {
+      newErrors.options[idx] = `Option ${idx + 1} is required`;
+      isValid = false;
+    }
+  });
+
+  if (
+    newQuestion.correctAnswer === null ||
+    newQuestion.correctAnswer < 0 ||
+    newQuestion.correctAnswer >= newQuestion.options.length
+  ) {
+    newErrors.correctAnswer = 'Select a valid correct answer';
+    isValid = false;
+  }
+
+  setErrors(newErrors);
+  return isValid;
+};
+
+
+  const addQuestion = async () => {
+  if (!validate()) return;
+
+  const res = await axios.post(`${BASEURL}/admin/save_question`, newQuestion, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  setQuestions([
+    ...questions,
+    {
+      id: questions.length + 1,
+      ...newQuestion,
+    },
+  ]);
+  setNewQuestion({
+    skill: '',
+    question: '',
+    options: ['', '', '', '', ''],
+    correctAnswer: 0,
+  });
+  setShowSuccess(true);
+  setTimeout(() => setShowSuccess(false), 2000);
+};
+
+
 
   const getSkills=async()=>{
 try {
@@ -177,14 +230,16 @@ try {
   />
 )}
 
- {activeTab === 'view' && (
-          <ViewQuestions 
-          questions={questions}/>
-          
- )}
+{activeTab === 'view' && (
+  <ViewQuestions
+ 
+    skills={skills}
+   
+  />
+)}
 
         {activeTab === 'questions' && (
-          <SetQuestions  newQuestion={newQuestion} setNewQuestion={setNewQuestion}  skills={skills} addQuestion={addQuestion} /> )}
+          <SetQuestions  newQuestion={newQuestion} setNewQuestion={setNewQuestion}    errors={errors}  skills={skills} addQuestion={addQuestion} /> )}
       </div>
     </div>
     </>

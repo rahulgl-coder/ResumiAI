@@ -2,13 +2,14 @@ import { useEffect, useState, useRef } from 'react';
 import { Clock, SkipForward, CheckCircle, Award, Sparkles, CircleDot } from 'lucide-react';
 import { SucessModal } from '../Components/InterviewCompletionModal';
 import { InterviewLoader } from '../Components/InterviewLoading';
-// import mockQuestions from '../Components/MockQuestion';
 import AssessmentWarning from '../Components/AssesmentWarning';
 import axios from 'axios'
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Interview = () => {
-    const { user,token } = useSelector((state) => state.user);
+  const { token } = useSelector((state) => state.user);
   const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
@@ -18,8 +19,8 @@ const Interview = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [score, setScore] = useState(0);
   const BASEURL=import.meta.env.VITE_BASEURL
-    const alreadyCalled = useRef(false);
-  
+  const alreadyCalled = useRef(false);
+  const navigate=useNavigate()
   const timerRef = useRef(null);
 
  
@@ -29,7 +30,13 @@ const Interview = () => {
   useEffect(() => {
     if (alreadyCalled.current) return;
     alreadyCalled.current = true;
-    fetchQuestions();
+   const res= fetchQuestions();
+
+   if (res) {
+    toast.error("Upload resume for interview")
+navigate('/')
+    
+   }
   }, []);
 
   useEffect(() => {
@@ -72,6 +79,7 @@ const fetchQuestions = async () => {
     }
     setQuestions(res.data.questions);
     setAnswers(new Array(res.data.questions.length).fill(null));
+    return res.data.questions
   } catch (error) {
     console.error('Error fetching questions from both sources:', error);
   } finally {

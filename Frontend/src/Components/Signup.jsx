@@ -277,7 +277,7 @@ const handleResend = async () => {
         {loading ? 'Processing...' : isSignUp ? 'Signup' : 'Signin'}
       </button>
             </form>
-{showLink && (
+{isSignUp && showLink && (
   <div style={{ marginTop: "1rem" }}>
     {canResend ? (
       <button onClick={handleResend} className="btn btn-link">
@@ -288,6 +288,7 @@ const handleResend = async () => {
     )}
   </div>
 )}
+
 
 
             <div className="flex items-center my-4">

@@ -41,9 +41,12 @@ const addQuestion = async (req, res) => {
  
     
     const questionData = req.body;
-    
 
-    const { skill, ...question } = questionData;
+    
+    
+   const { skill, ...question } = questionData;
+ 
+   
 
     const skillDoc = await SkillQuestionaire.findOne({ skill });
 
@@ -62,10 +65,37 @@ const addQuestion = async (req, res) => {
   }
 };
 
+const getQuestions= async (req, res) => {
+  try {
+    const skillDoc = await SkillQuestionaire.findOne({ skill: req.params.skill });
+    if (!skillDoc) return res.status(404).json({ message: 'Skill not found' });
+    res.json(skillDoc.questions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+const deleteQuestions= async (req, res) => {
+  try {
+    const { skill, id } = req.params;
+  
+const updated = await SkillQuestionaire.findOneAndUpdate(
+      { skill },
+      { $pull: { questions: { _id:id } } },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ message: "Not found" });
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 
 
 
 
 
-module.exports={addSkill,getSkill,addQuestion}
+
+
+module.exports={addSkill,getSkill,addQuestion,getQuestions,deleteQuestions}

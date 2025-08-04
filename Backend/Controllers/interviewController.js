@@ -22,33 +22,35 @@ const openai = new OpenAI({
   },
 });
 
-const getSkills=async(id)=>{
 
-  let skills=[]
-
+const getSkills = async (id) => {
   try {
-   
-    
-    const resume=await Resume.findOne({userId:id})
-    skills=resume.skills
- 
-  
-     
-  } catch (error) {
-    console.log(error);
-    
-  }
+    const resume = await Resume.findOne({ userId: id });
 
-  return skills;
-}
+    if (!resume || !resume.skills || resume.skills.length === 0) {
+      return null; 
+    }
+
+    return resume.skills;
+  } catch (error) {
+    console.error("Error in getSkills:", error);
+    return null;
+  }
+};
+
 
 
 
 
  const mainHandler=async(req,res)=>{
+try {
+const id=req.user.id
+const skills = await getSkills(id);
 
-  const id=req.user.id
-  const skills= await getSkills(id)
+if (!skills || skills.length === 0) {
+  return res.status(404).json({ message: "Skills not found" });
+}
+
   const prompt=`Generate a total of 20 multiple-choice questions in a mixed order from the skills:${skills.join(", ")}.
 
  Each question must be a JSON object with the following structure:
@@ -61,7 +63,6 @@ const getSkills=async(id)=>{
 
  Return only a single valid JSON array containing 20 objects in total, randomly mixed from all skills. Do not include any comments, explanations, headings, markdown, or formatting. Just output the raw JSON array.`
 
- try {
     const completion = await openai.chat.completions.create({
       model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
       messages: [
@@ -74,14 +75,13 @@ const getSkills=async(id)=>{
 
     let raw = completion.choices[0]?.message?.content || "";
 
-    // ✅ Clean markdown/code block wrappers like ```json ... ```
     raw = raw.trim();
     if (raw.startsWith("```")) {
       raw = raw.replace(/```(?:json)?/g, "").replace(/```/g, "").trim();
     }
 
 
-    // ✅ Sometimes fancy quotes cause issues
+
     raw = raw.replace(/[“”‘’]/g, '"');
 
     const data = JSON.parse(raw);
@@ -91,7 +91,7 @@ const getSkills=async(id)=>{
 
   } catch (error) {
     console.error("Error fetching MCQs:", error.response?.data || error.message);
-    return null;
+    return res.status(500).json({ message: "Failed to generate questions" });
   }
 
 }
@@ -127,6 +127,9 @@ const questionDatabase = async (req, res) => {
   try {
     const id = req.user.id;
     const skills = await getSkills(id);
+   if (!skills || skills.length === 0) {
+  return res.status(404).json({ message: "Skills not found" });
+}
      
     const questions = await getQuestionsDatabase(skills);
    
@@ -142,6 +145,9 @@ const questionDatabase = async (req, res) => {
 
 const getQuestionsDatabase = async (skills) => {
   try {
+
+
+
     const normalizedSkills = skills
       .map(skill => {
         const clean = skill.trim().toLowerCase();
@@ -208,8 +214,12 @@ const getQuestionsDatabase = async (skills) => {
 
 
 
+    
 
 
 
-    module.exports={mainHandler,saveResult,questionDatabase}
+
+
+
+    module.exports={mainHandler,saveResult,questionDatabase,}
  
