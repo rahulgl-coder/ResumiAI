@@ -1,6 +1,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import {  FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import SignInModal from './Signup';
@@ -15,16 +15,40 @@ import axios from 'axios';
 
 
 
-const Navbar=()=>{
+const Navbar = ({ type = "user" })=>{
     const [modalOpen, setModalOpen] = useState(false);
     const [menu ,setMenu]=useState(false) 
     const { user } = useSelector((state) => state.user);
-    const [users,setUsers] =useState(user)
+    const [isEmployer,setIsEmployer]=useState(false)
+  
 
     const navigate=useNavigate()
  const dispatch = useDispatch();
       
-    
+    const employerLinks = [
+  { label: "Home", href: "#home" },
+  { label: "Candidates", href: "#candidates" },
+  { label: "Contact", href: "#contact" },
+];
+
+const userLinks = [
+  { label: "Home", href: "#home" },
+  { label: "Features", href: "#features" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
+
+
+
+const navLinks = type === "employer" ? employerLinks : userLinks;
+
+useEffect(() => {
+  if (type === 'employer') {
+    setIsEmployer(true);
+  }
+}, [type]);
+
+
 
 
     const navVariants = {
@@ -41,9 +65,7 @@ const toggleMenu=()=>{
 
 const handleLogout=()=>{
 
-    dispatch(clearUser())
-
-}
+    dispatch(clearUser())}
 
 return(
     <>
@@ -59,10 +81,15 @@ return(
           <div className="flex justify-between h-16 items-center ">
             <h1 className="text-3xl font-extrabold tracking-tight">Resumi</h1>
             <div className="hidden md:flex space-x-6">
-              <a onClick={()=>{navigate("/chat")}} href="#home" className="text-gray hover:text-teal-300 transition-colors duration-300">Home</a>
-              <a href="#features" className="text-black hover:text-teal-300 transition-colors duration-300">Features</a>
-              <a href="#about" className="text-black hover:text-teal-300 transition-colors duration-300">About</a>
-              <a  href="#contact" className="text-black hover:text-teal-300 transition-colors duration-300">Contact</a>
+             {navLinks.map((link) => (
+  <a
+    key={link.label}
+    href={link.href}
+    className="text-black hover:text-teal-300 transition-colors duration-300"
+  >
+    {link.label}
+  </a>
+))}
 
 {user ? (
   <div className="relative group">
@@ -96,12 +123,14 @@ return(
 
         {/* Dropdown */}
         <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 pointer-events-auto z-50">
-          <button
-            onClick={() => navigate('/profile')}
-            className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-800"
-          >
-            Profile
-          </button>
+         {!isEmployer && (
+  <button
+    onClick={() => navigate('/profile')}
+    className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-800"
+  >
+    Profile
+  </button>
+)}
           <button
             onClick={handleLogout}
             className="block w-full text-left px-4 py-2 hover:bg-red-100 text-red-500"
@@ -145,10 +174,16 @@ return(
               transition={{ duration: 0.3 }}
             >
               <div className="flex flex-col space-y-4 py-4 px-6">
-                <a href="#home" className="text-white hover:text-teal-300" onClick={toggleMenu}>Home</a>
-                <a href="#features" className="text-white hover:text-teal-300" onClick={toggleMenu}>Features</a>
-                <a href="#about" className="text-white hover:text-teal-300" onClick={toggleMenu}>About</a>
-                <a href="#contact" className="text-white hover:text-teal-300" onClick={toggleMenu}>Contact</a>
+                {navLinks.map((link) => (
+  <a
+    key={link.label}
+    href={link.href}
+    className="text-white hover:text-teal-300"
+    onClick={() => setMenu(false)}
+  >
+    {link.label}
+  </a>
+))}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}

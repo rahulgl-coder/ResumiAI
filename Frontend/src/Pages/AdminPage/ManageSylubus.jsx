@@ -59,7 +59,7 @@ const addSkill = async () => {
 };
 
 
-  const deleteSkill = (skill) => {
+  const deleteSkill = async(skill) => {
   
   try {
      const res = await axios.post(

@@ -32,11 +32,14 @@ const Interview = () => {
     alreadyCalled.current = true;
    const res= fetchQuestions();
 
-   if (res) {
-    toast.error("Upload resume for interview")
-navigate('/')
+   console.log(res);
+   
+
+//    if (res) {
+//     toast.error("Upload resume for interview")
+// navigate('/')
     
-   }
+//    }
   }, []);
 
   useEffect(() => {

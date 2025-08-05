@@ -6,6 +6,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { useSelector } from 'react-redux';  
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast'
+import Title from './ResumeTitle'
 
 
 
@@ -187,6 +188,7 @@ const handleSubmit = async (e) => {
         const replaceRes = await axios.post(`${BASEURL}/save-profile`, newFormData, {
           headers: {
             "Content-Type": "multipart/form-data",
+             Authorization: `Bearer ${token}`
           },
         });
 
@@ -205,7 +207,7 @@ const handleSubmit = async (e) => {
 
   } catch (err) {
     console.error(err);
-    alert("Error saving profile");
+    alert("Error saving resume");
   }
 };
 
@@ -238,9 +240,17 @@ const handleSubmit = async (e) => {
     <>
       <section className="bg-gradient-to-r from-blue-50 to-teal-50 h-screen  flex items-center justify-center text-black relative">
         <div className="text-center max-w-4xl mx-auto px-4">
-          <motion.h1 className="text-4xl sm:text-6xl font-extrabold mb-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            Launch Your Career with Resumi
-          </motion.h1>
+           <motion.h1
+      className="text-4xl sm:text-6xl font-extrabold mb-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      Launch Your Career with{" "}
+      <Title target="Resumi" />
+    </motion.h1>
+        
+        
           <motion.p className="text-lg sm:text-2xl mb-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
             Upload your resume and get verified instantly!
           </motion.p>

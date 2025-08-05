@@ -10,4 +10,4 @@ interviewRoute.get('/questions/backup',authorizeRoles('user','admin'),controller
 
 
 
-module.exports=interviewRoute
+module.exports=interviewRoute 

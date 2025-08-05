@@ -10,6 +10,8 @@ import VerifyEmailPage from './Pages/VerifyEmailPage';
 
 import ManageSkillPage from './Pages/AdminPage/ManageSylubus';
 
+import EmployerHome from './Pages/EmployerPages/Home'
+
 
 import ProtectedRoute from './Components/ProtectedRoute';
 import Unauthorized from './Pages/Unauthorized';
@@ -39,7 +41,7 @@ function App() {
         <Route path='/admin'element={<ManageSkillPage/>}/>
       </Route>
 
-
+        <Route path='/employer'element={<EmployerHome/>}/>
  </Routes>
     </Router>
 
