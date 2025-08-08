@@ -7,15 +7,16 @@ import { setUser } from '../Redux/userSlice';
 import { useDispatch } from 'react-redux';
 
 
-const GoogleLoginButton = ({ buttonText = "Sign In with Google", onSuccessLogin }) => {
+const GoogleLoginButton = ({ buttonText = "Sign In with Google", onSuccessLogin,role }) => {
   const dispatch=useDispatch()
   const handleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
+      console.log(decoded);
       
 
       const res = await axios.post('http://localhost:5000/auth/google', {
-        token: credentialResponse.credential,
+        token: credentialResponse.credential,role
       });
  
  if (onSuccessLogin) {

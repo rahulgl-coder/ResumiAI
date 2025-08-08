@@ -1,8 +1,11 @@
  
  import { motion } from 'framer-motion';
  import Title from '../ResumeTitle'
+
  
  const Hero = () => (
+  <>
+  
       <motion.section 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -38,6 +41,7 @@
           </motion.a>
         </div>
       </motion.section>
+      </>
     );
 
     export default Hero;

@@ -10,6 +10,7 @@ const adminRoute=require('./Routes/adminRoutes')
 const resumeRoute = require('./Routes/resumRoute');
 const userRoute=require('./Routes/authRoutes')
 const interviewRoute=require('./Routes/interviewRoute')
+const employerRoute=require('./Routes/employerRoute')
 const cors = require('cors');
 
 
@@ -26,6 +27,7 @@ app.use('/auth',userRoute)
 app.use('/admin',adminRoute)
 app.use(resumeRoute)
 app.use(interviewRoute)
+app.use(employerRoute)
 
 
 

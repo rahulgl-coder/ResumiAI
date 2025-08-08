@@ -29,6 +29,7 @@ function App() {
         <Route path="/" element={<Home />}/>
         <Route path='/verify-email' element={<VerifyEmailPage/>}/>
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path='/employer'element={<EmployerHome/>}/>
 
     <Route element={<ProtectedRoute allowedRoles={['user']} />}> 
         <Route path="/interview-intro" element={<InterviewIntro/>}/>
@@ -40,8 +41,12 @@ function App() {
     <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route path='/admin'element={<ManageSkillPage/>}/>
       </Route>
-
-        <Route path='/employer'element={<EmployerHome/>}/>
+    
+    
+    {/* <Route element={<ProtectedRoute allowedRoles={['employer']} />}> */}
+       
+        {/* </Route> */}
+        
  </Routes>
     </Router>
 

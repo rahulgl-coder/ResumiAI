@@ -202,6 +202,7 @@ return(
  <SignInModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
+        role={type}
       />
 
 

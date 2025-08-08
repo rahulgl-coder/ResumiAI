@@ -18,9 +18,8 @@ const generateToken = (user) => {
 
 
 const googleAuth = async (req, res) => {
-  const { token } = req.body;
-
-  try {
+  const { token,role } = req.body;
+try {
    
     const ticket = await client.verifyIdToken({
       idToken: token,
@@ -33,17 +32,16 @@ const googleAuth = async (req, res) => {
    
     let user = await User.findOne({ email });
 
-
     if (!user) {
       user = await User.create({
         email,
         name,
         picture,
         googleId: sub,
-        isVerified:true
+        isVerified:true,
+        role:role
        
-      });
-    }
+      });    }
 
     const tok=await generateToken(user)
    
@@ -63,9 +61,11 @@ const googleAuth = async (req, res) => {
 
 const signUp = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password,role } = req.body;
+  
+    
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password ||!role) {
       return res.status(400).json({ msg: 'All fields are required' });
     }
 
@@ -79,6 +79,11 @@ const signUp = async (req, res) => {
     }
 
     const existing = await User.findOne({ email });
+
+    if(existing.role!=role){
+     
+   return res.status(400).json({ message: 'Use another email for different category' });
+    }
 
     if (existing && existing.googleId && !existing.password) {
       
@@ -101,7 +106,7 @@ const signUp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password: hashedPassword,role });
 
     const token = await generateToken(newUser);
     await sendVerificationEmail(newUser, token);

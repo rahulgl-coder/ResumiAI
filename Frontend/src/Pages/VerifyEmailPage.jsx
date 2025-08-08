@@ -6,12 +6,16 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../Redux/userSlice";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import EmployerRegisterModal from '../Components/EmployerComponents/EmployerRegistrationModal'
+
 
 const VerifyEmailPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isOpen,setOpen]=useState(false)
   const alreadyCalled = useRef(false);
+  const [path,setPath]=useState('')
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -27,10 +31,11 @@ const VerifyEmailPage = () => {
           `${import.meta.env.VITE_BASEURL}/auth/verify-email?token=${token}`
         );
         dispatch(setUser({ user: res.data.user, token: res.data.token }));
-        setMessage("✅ Email verified successfully!");
+        setPath(res.data.user.role)
+        setMessage(" Email verified successfully!");
       } catch (err) {
         setMessage(
-          "❌ Verification failed: " +
+          " Verification failed: " +
             (err.response?.data?.message || err.message)
         );
       } finally {
@@ -42,13 +47,28 @@ const VerifyEmailPage = () => {
     verify();
   }, [dispatch]);
 
+  const handleNavigation=()=>{
+
+    if(path==='employer'){
+
+    setShowModal(false)
+    setOpen(true)
+    }else if(path==='user'){
+     
+      navigate('/')
+
+    }else if(path==='admin'){
+      navigate('/admin')
+    }
+
+    }
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       {loading && (
         <div className="text-xl font-medium text-gray-600">🔄 Verifying email...</div>
       )}
 
-      {/* Modal with Background Blur */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -68,16 +88,17 @@ const VerifyEmailPage = () => {
               <p className="text-gray-700 mb-6">{message}</p>
               <div className="flex justify-end">
                 <button
-                  onClick={() => navigate("/")}
+                  onClick={handleNavigation}
                   className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Go to Home
+                >{path==='employer'?"Add Company Details to complete Verification":"Home"}
+                  
                 </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+       <EmployerRegisterModal isOpen={isOpen} onClose={() => {setOpen(false) ,  navigate(path === "employer" ? "/employer" : "/")}} />
     </div>
   );
 };

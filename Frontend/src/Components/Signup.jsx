@@ -6,19 +6,24 @@ import { setUser } from '../Redux/userSlice';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast'
 import GoogleLoginButton from './GoogleLogin'; 
+import EmployerRegisterModal from '../Components/EmployerComponents/EmployerRegistrationModal'
 
 
 
-const SignInModal = ({ isOpen, onClose }) => {
+
+const SignInModal = ({ isOpen, onClose ,role}) => {
   const [isSignUp, setIsSignUp] = useState(true);
   const [showLink,setShowLink]=useState(false)
   const [countdown, setCountdown] = useState(30);
   const [canResend, setCanResend] = useState(false);
+  const [register,setRegister]=useState(false)
+
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
+    role:role
   });
   const [errors, setErrors] = useState({
   name: '',
@@ -35,6 +40,8 @@ const dispatch = useDispatch();
     setErrors({})
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+ 
 
  const validate=()=>{
 
@@ -119,6 +126,7 @@ toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.mes
 
   }finally{
  setLoading(false)
+
   }
 };
 
@@ -151,6 +159,7 @@ const handleResend = async () => {
   };
 
   return (
+    <>
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -247,6 +256,7 @@ const handleResend = async () => {
               {errors.password && (
   <p className="text-red-500 text-sm mt-1">{errors.password}</p>
 )}
+  
                    <button
      type='submit'
         disabled={loading}
@@ -306,9 +316,16 @@ const handleResend = async () => {
         token: data.tok,
       }));
       toast.success("Google Sign In successful");
-      onClose();
-      navigate("/");
+      if(data.user.role==='employer'){
+   onClose();
+   setRegister(true)
+     }else if(data.user.role==='user'){
+      onClose()
+      navigate('/')
+     }
+      
     }}
+    role={role}
   />
 </div>
 
@@ -324,7 +341,10 @@ const handleResend = async () => {
           </motion.div>
         </motion.div>
       )}
+      
     </AnimatePresence>
+      {   <EmployerRegisterModal  isOpen={register} onClose={() => {setRegister(false) ,  navigate(role === "employer" ? "/employer" : "/");}} />}
+    </>
   );
 };
 
