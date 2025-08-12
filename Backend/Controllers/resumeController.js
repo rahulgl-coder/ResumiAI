@@ -4,6 +4,7 @@ const mammoth = require('mammoth');
 const Resume=require('../Models/resumeSchema')
 const {uploadToS3}=require('../utilities/s3Uploads')
 const supabase =require('../utilities/supabaseClient')
+const User=require('../Models/userSchema')
 
 
  const resumeParser=async (req, res) => {
@@ -241,8 +242,40 @@ if (
 };
 
 
+const getResume = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    
+    let resumes = await Resume.find({ userId: id });
+    if (resumes.length === 0) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    
+    resumes = resumes.map(r => {
+      const fileName = decodeURIComponent(r.resume.split("/").pop()); 
+      const cleanName = fileName.split("-").slice(2).join("-"); 
+
+      return {
+        ...r.toObject(),
+         name: cleanName 
+      };
+    });
+
+    return res.status(200).json({ resumes });
+  } catch (error) {
+    console.error("Error fetching resumes:", error);
+    return res.status(500).json({ message: "Server error while fetching resumes" });
+  }
+};
 
 
 
 
-module.exports={resumeParser,saveResume}
+
+
+
+
+
+module.exports={resumeParser,saveResume,getResume}

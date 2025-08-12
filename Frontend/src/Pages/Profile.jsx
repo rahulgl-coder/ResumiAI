@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   User, Mail, Lock, Download, Trash2, Eye, EyeOff, Save, X, Upload
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ResumeModal from '../Components/ResumeModal';
+import axios from 'axios'
+import { useSelector } from 'react-redux';
+
 
 const Profile = () => {
   const [userData, setUserData] = useState({
@@ -16,28 +20,38 @@ const Profile = () => {
 
   const [show, setShow] = useState({ current: false, new: false, confirm: false });
   const [togglePassForm, setTogglePassForm] = useState(false);
-  const [resumes, setResumes] = useState([
-    {
-      id: 1,
-      name: 'Software_Engineer_Resume.pdf',
-      url: 'https://my-bucket.s3.amazonaws.com/resumes/software_engineer_resume.pdf',
-      uploaded: '2024-01-15',
-      size: '2.3MB',
-      isActive: true
-    },
-    {
-      id: 2,
-      name: 'Data_Scientist_Resume.pdf',
-      url: 'https://my-bucket.s3.amazonaws.com/resumes/data_scientist_resume.pdf',
-      uploaded: '2024-01-10',
-      size: '1.8MB',
-      isActive: false
-    }
-  ]);
+  const [resumes, setResumes] = useState([]);
   const [activePDF, setActivePDF] = useState(null);
   const [notify, setNotify] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const BASEURL=import.meta.env.VITE_BASEURL
+  const {token}=useSelector((state)=>state.user)
+
+  useEffect(()=>{
+
+fetchResume()
+
+  },[token])
+
+  const fetchResume=async()=>{
+    try {
+
+      const res=await axios.get(`${BASEURL}/check-resume`,{
+         headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+  
+    setResumes(res.data.resumes)
+
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
+
+  }
 
   const notifyUser = (msg, type = 'success') => {
     const id = Date.now();
@@ -82,28 +96,16 @@ const Profile = () => {
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
+    console.log(file);
+    
     if (!file) return;
-    
-    if (file.type !== 'application/pdf') {
-      notifyUser('Please upload a PDF file', 'error');
-      return;
-    }
-    
-    setIsUploading(true);
-    // Simulate upload
-    setTimeout(() => {
-      const newResume = {
-        id: Date.now(),
-        name: file.name,
-        url: URL.createObjectURL(file),
-        uploaded: new Date().toISOString().split('T')[0],
-        size: `${(file.size / (1024 * 1024)).toFixed(1)}MB`,
-        isActive: false
-      };
-      setResumes(prev => [...prev, newResume]);
-      setIsUploading(false);
-      notifyUser('Resume uploaded successfully');
-    }, 1500);
+    setSelectedFile(file)
+ 
+ 
+  };
+    const handleModalClose = () => {
+    setSelectedFile(null);
+   
   };
 
   return (
@@ -265,14 +267,9 @@ const Profile = () => {
               </label>
             </div>
 
-            {isUploading && (
-              <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center gap-3">
-                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-blue-700">Uploading resume...</p>
-              </div>
-            )}
+          
 
-            {resumes.length > 0 ? (
+            {resumes.length >= 0 ? (
               <div className="space-y-3">
                 {resumes.map(r => (
                   <motion.div 
@@ -289,7 +286,7 @@ const Profile = () => {
                           <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Active</span>
                         )}
                       </p>
-                      <p className="text-sm text-gray-500 mt-1">{r.size} • Uploaded on {r.uploaded}</p>
+                      <p className="text-sm text-gray-500 mt-1">{r.size} • Uploaded on {r.updatedAt}</p>
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       {!r.isActive && (
@@ -364,7 +361,7 @@ const Profile = () => {
                   </div>
                   <div className="w-full h-96 rounded-lg border overflow-hidden">
                     <iframe 
-                      src={activePDF.url} 
+                      src={activePDF.resume} 
                       className="w-full h-full"
                       title="PDF Viewer"
                     />
@@ -396,6 +393,9 @@ const Profile = () => {
           </motion.div>
         )}
       </AnimatePresence>
+       {selectedFile && (
+        <ResumeModal file={selectedFile} onClose={handleModalClose} />
+      )}
     </div>
   );
 };

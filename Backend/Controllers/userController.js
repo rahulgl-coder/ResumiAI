@@ -63,6 +63,7 @@ const signUp = async (req, res) => {
   try {
     const { name, email, password,role } = req.body;
   
+    console.log(role);
     
 
     if (!name || !email || !password ||!role) {
@@ -79,8 +80,8 @@ const signUp = async (req, res) => {
     }
 
     const existing = await User.findOne({ email });
-
-    if(existing.role!=role){
+ 
+      if(existing&&existing.role!=role){
      
    return res.status(400).json({ message: 'Use another email for different category' });
     }
@@ -121,19 +122,20 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password ,role} = req.body;
   
 
-    if (!email || !password)
+
+    if (!email || !password || !role)
       return res.status(400).json({ message: "Email and password are required" });
 
     const user = await User.findOne({ email });
-   
-    
-    
-    if (!user)
+       if (!user)
       return res.status(404).json({ message: "Email not found" });
-    if(!user.password){
+   
+ 
+    
+ if(!user.password){
       return res.status(400).json({message:"Sign Up First"})
     }
     if(!user.isVerified){

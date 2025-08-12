@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../Redux/userSlice';
 
-import axios from 'axios';
+
 
 
 
@@ -188,7 +188,7 @@ return(
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-teal-500 text-white px-5 py-2 rounded-full hover:bg-teal-600"
-                //   onClick={setModalOpen(true)}
+                  onClick={setModalOpen(true)}
                 >
                   Get Start
                 </motion.button>

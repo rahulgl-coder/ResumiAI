@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-const EmployerRegisterModal = ({ isOpen, onClose }) => {
+const EmployerRegisterModal = ({ isOpen, onClose,onRegisterSuccess }) => {
   const [formData, setFormData] = useState({
     companyName: '',
     companyAddress: '',
@@ -11,6 +12,8 @@ const EmployerRegisterModal = ({ isOpen, onClose }) => {
     about: '',
   });
 
+  
+  const { token } = useSelector((state) => state.user);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const BASEURL = import.meta.env.VITE_BASEURL;
@@ -20,7 +23,7 @@ const EmployerRegisterModal = ({ isOpen, onClose }) => {
     setErrors({});
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  };
+  }
 
   const validate = () => {
     const newErrors = {};
@@ -51,7 +54,14 @@ const EmployerRegisterModal = ({ isOpen, onClose }) => {
 
     setLoading(true);
     try {
-      await axios.post(`${BASEURL}/employer/register`, formData);
+      
+      
+      await axios.post(`${BASEURL}/employer/register`, formData,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      onRegisterSuccess()
       toast.success('Company registered successfully!');
       onClose();
     } catch (err) {
@@ -93,11 +103,11 @@ const EmployerRegisterModal = ({ isOpen, onClose }) => {
               <h2 className="text-2xl font-bold text-gray-800">
                 Employer Registration
               </h2>
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+              {/* <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </button>
+              </button> */}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -190,6 +200,8 @@ const EmployerRegisterModal = ({ isOpen, onClose }) => {
                 )}
                 {loading ? 'Registering...' : 'Register Your Company on Resumi'}
               </button>
+              <button     onClick={onClose} className="w-md flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded disabled:opacity-60"
+>Remind me later</button>
             </form>
           </motion.div>
         </motion.div>

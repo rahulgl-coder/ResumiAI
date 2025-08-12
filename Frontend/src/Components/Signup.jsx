@@ -25,6 +25,9 @@ const SignInModal = ({ isOpen, onClose ,role}) => {
     name: '',
     role:role
   });
+
+ 
+  
   const [errors, setErrors] = useState({
   name: '',
   email: '',
@@ -107,14 +110,19 @@ const dispatch = useDispatch();
   token: res.data.token
 
 }));
+
 onClose()
+if(res.data.user.role==='employer')
+  {
+  navigate('/employer')
+}
 }
 if (isSignUp) {
       setShowLink(true);
       setCountdown(30); 
       setCanResend(false); 
       startCountdown(); 
-    }
+ }
 
 
 toast.success(`${isSignUp ? 'Link is sended to the mail' : 'Signin'} successful`);
@@ -122,24 +130,20 @@ toast.success(`${isSignUp ? 'Link is sended to the mail' : 'Signin'} successful`
 
 } catch (err) {
   
-toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
+  toast.error(`${isSignUp ? 'Signup' : 'Signin'} failed: ${err.response?.data?.message || "Something went wrong"}`);
 
   }finally{
  setLoading(false)
-
   }
 };
-
 
 const handleResend = async () => {
   try {
     setCanResend(false);
     setCountdown(30);
     startCountdown();
-
-    await axios.post(`${BASEURL}/auth/resend-link`, { email: formData.email });
-
-    toast.success('Verification link resent successfully');
+ await axios.post(`${BASEURL}/auth/resend-link`, { email: formData.email });
+ toast.success('Verification link resent successfully');
   } catch (err) {
     toast.error(err.response?.data?.msg || "Failed to resend verification link");
   }
@@ -317,7 +321,8 @@ const handleResend = async () => {
       }));
       toast.success("Google Sign In successful");
       if(data.user.role==='employer'){
-   onClose();
+         onClose();
+         navigate('/employer')
    setRegister(true)
      }else if(data.user.role==='user'){
       onClose()
