@@ -41,7 +41,7 @@ try {
         isVerified:true,
         role:role
        
-      });    }
+      }); }
 
     const tok=await generateToken(user)
    
@@ -63,7 +63,7 @@ const signUp = async (req, res) => {
   try {
     const { name, email, password,role } = req.body;
   
-    console.log(role);
+
     
 
     if (!name || !email || !password ||!role) {
@@ -215,7 +215,101 @@ try {
 }
 }
 
+const changeName = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const _id = req.user.id;
+
+    if (!name || name.trim() === "") {
+      return res.status(400).json({ msg: "Name is required" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      { name },
+      { new: true } 
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    res.status(200).json({ msg: "Name updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { current, newPass } = req.body;
+    const userId = req.user.id;
+
+ 
+    if (!current || !newPass) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Current and new password are required' 
+      });
+    }
+
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+  
+    if (!user.password) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You have been sign In through Google.' 
+      });
+    }
+
+
+    const isMatch = await bcrypt.compare(current, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Current password is incorrect' 
+      });
+    }
+
+  
+    if (newPass.length < 6) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Password must be at least 6 characters' 
+      });
+    }
+
+   
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPass, salt);
+    await user.save();
+
+  
+    res.status(200).json({ 
+      success: true, 
+      message: 'Password updated successfully' 
+    });
+
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error changing password',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
 
 
 
-module.exports={signUp,signIn,googleAuth,verifyEmail,resendLink}
+
+module.exports={signUp,signIn,googleAuth,verifyEmail,resendLink,changeName,changePassword}

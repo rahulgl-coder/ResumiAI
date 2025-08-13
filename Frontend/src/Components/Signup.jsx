@@ -261,7 +261,7 @@ const handleResend = async () => {
   <p className="text-red-500 text-sm mt-1">{errors.password}</p>
 )}
   
-                   <button
+   <button
      type='submit'
         disabled={loading}
         className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded disabled:opacity-60 disabled:cursor-not-allowed"
@@ -312,6 +312,8 @@ const handleResend = async () => {
             </div>
 
           <div className="w-full flex items-center justify-center">
+
+
   <GoogleLoginButton
     buttonText={isSignUp ? "Sign In with Google" : "Sign Up  with Google"}
     onSuccessLogin={(data) => {
@@ -320,13 +322,14 @@ const handleResend = async () => {
         token: data.tok,
       }));
       toast.success("Google Sign In successful");
+      
       if(data.user.role==='employer'){
          onClose();
          navigate('/employer')
-   setRegister(true)
-     }else if(data.user.role==='user'){
-      onClose()
-      navigate('/')
+         setRegister(true)
+      }else if(data.user.role==='user'){
+         onClose()
+         navigate('/')
      }
       
     }}
