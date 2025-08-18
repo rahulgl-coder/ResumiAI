@@ -11,7 +11,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
   try {
     const { role } = JSON.parse(atob(token.split('.')[1])); 
 
-    if (allowedRoles.includes(role)) {
+ 
+   if (allowedRoles.includes(role)) {
       return <Outlet />;
     }
 

@@ -27,13 +27,13 @@ const Navbar = ({ type = "user" })=>{
       
     const employerLinks = [
   { label: "Home", href: "#home" },
-  { label: "Candidates", href: "#candidates" },
+  { label: "Candidates", href: "/candidates" },
   { label: "Contact", href: "#contact" },
 ];
 
 const userLinks = [
   { label: "Home", href: "#home" },
-  { label: "Features", href: "#features" },
+  { label: "Employer", href: "/employer" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ];
@@ -65,7 +65,8 @@ const toggleMenu=()=>{
 
 const handleLogout=()=>{
 
-    dispatch(clearUser())}
+    dispatch(clearUser())
+  }
 
 return(
     <>
@@ -98,9 +99,7 @@ return(
 
       <div className="relative">
        
-        {/* <div className="w-10 h-10 rounded-full bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300">
-          { user.name[0].toUpperCase()}
-        </div> */}
+     
     
 <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-500 text-white font-bold flex items-center justify-center cursor-pointer group-hover:bg-gray-600 transition-all duration-300 relative">
   {user?.picture ? (
@@ -123,14 +122,14 @@ return(
 
         {/* Dropdown */}
         <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 pointer-events-auto z-50">
-         {!isEmployer && (
+         
   <button
     onClick={() => navigate('/profile')}
     className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-800"
   >
     Profile
   </button>
-)}
+
           <button
             onClick={handleLogout}
             className="block w-full text-left px-4 py-2 hover:bg-red-100 text-red-500"

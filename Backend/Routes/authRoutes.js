@@ -11,8 +11,8 @@ userRoute.post('/signin',controller.signIn)
 userRoute.post('/google',controller.googleAuth)
 userRoute.get('/verify-email',controller.verifyEmail)
 userRoute.post('/resend-link',controller.resendLink)
-userRoute.patch('/name-change',authorizeRoles('user'),controller.changeName)
-userRoute.patch('/change-password',authorizeRoles('user'),controller.changePassword)
+userRoute.patch('/name-change',authorizeRoles('user','employer'),controller.changeName)
+userRoute.patch('/change-password',authorizeRoles('user','employer'),controller.changePassword)
 
 
 

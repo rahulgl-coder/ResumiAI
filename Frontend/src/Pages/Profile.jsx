@@ -11,6 +11,8 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { setUser } from '../Redux/userSlice';
 import toast from 'react-hot-toast';
+import ConnectionStatus from '../Components/EmployerComponents/ConnectionStatus';
+import Nav from '../Components/EmployerComponents/Nav';
 
 const Profile = () => {
   const [passwordData, setPasswordData] = useState({
@@ -32,12 +34,19 @@ const Profile = () => {
     name: user.name,
   });
   const [activeSection, setActiveSection] = useState('personal');
-
+  const [employer,setEmployer]=useState(false)
+  const role=user.role
 
 
   useEffect(() => {
+
+    if(role==='user'){
     fetchResume();
-      if(user.googleId){
+    }
+    if(role==='employer'){
+    setEmployer(true)
+    }
+      if(!user.password){
     setPasswordForm(false)
     }
   }, [token]);
@@ -160,64 +169,9 @@ const updatePassword = async () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-<div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-white">
-
-  <motion.div 
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4, delay: 0.1 }}
-    className="flex items-center gap-6"
-  >
-    <button 
-      onClick={() => window.history.back()} 
-      className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-    >
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        className="h-5 w-5" 
-        viewBox="0 0 20 20" 
-        fill="currentColor"
-      >
-        <path 
-          fillRule="evenodd" 
-          d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" 
-          clipRule="evenodd" 
-        />
-      </svg>
-      <span className="text-sm font-medium">Back</span>
-    </button>
-  
-    <motion.h1 
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      className="px-5 text-3xl font-extrabold tracking-tight"
-    >
-      Resumi
-    </motion.h1>
-  </motion.div>
-
-
-  <motion.div
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4, delay: 0.3 }}
-    className="text-right"
-  >
-    <h1 className="text-lg font-bold text-gray-800">
-      Welcome, <span className="text-blue-600">{user.name}</span>
-    </h1>
-    <p className="text-xs text-gray-500 mt-1">
-      {new Date().toLocaleDateString('en-US', { 
-        weekday: 'short', 
-        month: 'short', 
-        day: 'numeric' 
-      })}
-    </p>
-  </motion.div>
-</div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Nav/>
+       
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -284,6 +238,7 @@ const updatePassword = async () => {
         )}
       </button>
 
+    {!employer&&(
       <button
         onClick={() => setActiveSection('resumes')}
         className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
@@ -302,13 +257,14 @@ const updatePassword = async () => {
           <ChevronDown className="w-5 h-5" />
         )}
       </button>
+)}
     </nav>
   </div>
 </div>
 
-          {/* Main Content */}
+        
           <div className="flex-1">
-            {/* Personal Information Section */}
+        
             <AnimatePresence>
               {activeSection === 'personal' && (
                 <motion.div
@@ -728,6 +684,9 @@ const updatePassword = async () => {
       {/* Resume Modal */}
       {selectedFile && (
         <ResumeModal file={selectedFile} onClose={handleModalClose} />
+      )}
+      {employer&&(
+        <ConnectionStatus/>
       )}
     </div>
   );

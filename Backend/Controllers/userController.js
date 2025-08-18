@@ -176,7 +176,8 @@ const verifyEmail= async (req, res) => {
     
     if (!user) return res.status(404).json('User not found');
 
-    if (user.isVerified) return res.status(401).json({message:'Email already verified'});
+    if (user.isVerified && user.googleId) return res.status(201).json({user,token});
+    if(user.isVerified) return res.status(402).json({message:"Email is verified try sign in"})
 
     user.isVerified = true;
     await user.save();

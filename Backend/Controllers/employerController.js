@@ -1,4 +1,26 @@
 const CompanyRegister=require('../Models/companyRegistration')
+const Resume=require('../Models/resumeSchema')
+const User=require('../Models/userSchema')
+const nodemailer = require('nodemailer');
+
+
+require('dotenv').config
+
+
+
+
+const getTransporter = () => {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+      tls: {
+    rejectUnauthorized: false, 
+  },
+  });
+};
 
 
 
@@ -60,5 +82,85 @@ const checkRegistration = async (req, res) => {
 };
 
 
+const getCandidates=async(req,res)=>{
 
-module.exports={register,checkRegistration}
+  try {
+   
+    
+    const candidates = await Resume.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$user' },
+      {
+        $lookup: {
+          from: 'interviewresults',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'interviewResult'
+        }
+      },
+      { $unwind: { path: '$interviewResult', preserveNullAndEmptyArrays: true } },
+      { $match: { 'user.role': 'user' } },
+      { $project: { 'user.password': 0, 'user.googleId': 0 } }
+    ]);
+
+    console.log(candidates);
+    
+    res.json(candidates);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+const sendMail = async (req, res) => {
+  try {
+    const { candidateId, subject, message, jobTitle } = req.body;
+
+    // Candidate (receiver)
+    const user = await User.findById(candidateId);
+    if (!user) {
+      return res.status(404).json({ msg: "Candidate not found" });
+    }
+
+    // Sender (logged in user)
+    const sender = await User.findById(req.user.id);
+    if (!sender) {
+      return res.status(404).json({ msg: "Sender not found" });
+    }
+
+    const transporter = getTransporter();
+
+  
+    const mailOptions = {
+      from: `"${sender.name}" <${process.env.EMAIL_USER}>`, 
+      to: user.email,
+      subject: subject || `Job Opportunity: ${jobTitle}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height:1.6;">
+          <h2>${jobTitle}</h2>
+          <p><strong>From:</strong> ${sender.name} (${sender.email})</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ msg: "Email sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error sending email", error: error.message });
+  }
+};
+
+
+module.exports={register,checkRegistration,getCandidates,sendMail}

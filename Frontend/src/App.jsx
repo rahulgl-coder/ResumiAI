@@ -11,6 +11,7 @@ import VerifyEmailPage from './Pages/VerifyEmailPage';
 import ManageSkillPage from './Pages/AdminPage/ManageSylubus';
 
 import EmployerHome from './Pages/EmployerPages/Home'
+import CandidatesPage from './Pages/EmployerPages/CandidatesPage';
 
 
 import ProtectedRoute from './Components/ProtectedRoute';
@@ -35,17 +36,21 @@ function App() {
         <Route path="/interview-intro" element={<InterviewIntro/>}/>
         <Route path="/interview" element={<Interview/>}/>
         <Route path="/chat" element={<ChatComponent/>}/>
-        <Route path="/profile" element={<Profile/>}/>
       </Route>    
+       
+
+    <Route element={<ProtectedRoute allowedRoles={['user','employer']} />}> 
+        <Route path="/profile" element={<Profile/>}/>
+      </Route> 
 
     <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
         <Route path='/admin'element={<ManageSkillPage/>}/>
       </Route>
     
     
-    {/* <Route element={<ProtectedRoute allowedRoles={['employer']} />}> */}
-       
-        {/* </Route> */}
+    <Route element={<ProtectedRoute allowedRoles={['employer']} />}> 
+        <Route path='/candidates'element={<CandidatesPage/>}/>
+    </Route>
         
  </Routes>
     </Router>

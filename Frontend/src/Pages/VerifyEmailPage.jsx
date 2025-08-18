@@ -18,6 +18,7 @@ const VerifyEmailPage = () => {
   const [path,setPath]=useState('')
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const BASEURL=import.meta.env.VITE_BASEURL
 
   useEffect(() => {
     if (alreadyCalled.current) return;
@@ -28,7 +29,7 @@ const VerifyEmailPage = () => {
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/auth/verify-email?token=${token}`
+          `${BASEURL}/auth/verify-email?token=${token}`
         );
         dispatch(setUser({ user: res.data.user, token: res.data.token }));
         setPath(res.data.user.role)

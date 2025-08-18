@@ -1,0 +1,273 @@
+
+
+
+
+.candidate-masonry {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+
+}
+
+/* Glassmorphism card effect */
+.candidate-glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* border: 1px solid rgba(255, 255, 255, 0.2); */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.candidate-glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Header section */
+.candidate-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+/* Avatar styling */
+.candidate-avatar-wrapper {
+  position: relative;
+}
+
+.candidate-avatar {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  border: 2px solid rgba(255, 255, 255, 0.3);  
+}
+
+.active-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Candidate metadata */
+.candidate-meta {
+  flex: 1;
+}
+
+.candidate-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.candidate-email {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0.25rem 0;
+}
+
+/* Score ring styling */
+.candidate-score {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.score-ring {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.score-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.score-label {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Save button */
+.save-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.save-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: #cbd5e1;
+}
+
+.save-button.saved svg {
+  fill: #ef4444;
+}
+
+.save-button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Info section */
+.candidate-glass-card .mt-4 {
+  margin-top: 1.5rem;
+}
+
+.candidate-glass-card .space-y-3 > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.candidate-glass-card .text-sm {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.candidate-glass-card .text-gray-400 {
+  color: #94a3b8;
+}
+
+/* Skills and work modes */
+.candidate-glass-card .text-xs {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.candidate-glass-card .bg-blue-50 {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.candidate-glass-card .bg-gray-100 {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.candidate-glass-card .bg-green-50 {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.candidate-glass-card .bg-purple-50 {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.candidate-glass-card .bg-orange-50 {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Buttons */
+.candidate-glass-card button {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.candidate-glass-card .bg-blue-50 {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.candidate-glass-card .bg-blue-50:hover {
+  background: #bae6fd;
+}
+
+.candidate-glass-card .bg-gradient-to-r {
+  background: linear-gradient(to right, #2563eb, #3b82f6);
+  color: white;
+}
+
+.candidate-glass-card .bg-gradient-to-r:hover {
+  background: linear-gradient(to right, #1e40af, #2563eb);
+}
+
+/* No candidates found */
+.no-candidates {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-candidates .text-lg {
+  font-size: 1.125rem;
+  color: #1e293b;
+}
+
+.no-candidates .text-gray-500 {
+  color: #64748b;
+}
+
+.no-candidates button {
+  background: #2563eb;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+}
+
+.no-candidates button:hover {
+  background: #1e40af;
+}
+
+/* Spinner for loading state */
+.spinner-3d {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  perspective: 800px;
+}
+
+.spinner-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid transparent;
+  border-top-color: #2563eb;
+  animation: spin 1.2s ease-in-out infinite;
+}
+
+.spinner-blue {
+  border-top-color: #2563eb;
+}
+
+.spinner-purple {
+  border-top-color: #7e22ce;
+  animation-delay: -0.6s;
+}
+
+@keyframes spin {
+  0% { transform: rotateX(45deg) rotateY(0deg); }
+  100% { transform: rotateX(45deg) rotateY(360deg); }
+}
