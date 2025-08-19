@@ -3,6 +3,7 @@ import { MapPin, Briefcase, Star, Mail, Bookmark, ChevronLeft, Phone, Linkedin, 
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import ResumeViewer from '../../Components/EmployerComponents/ResumeViewer';
+import openRazorpay from '../../Utilities/Razorpay';
 
 const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved }) => {
   const [isSaved, setIsSaved] = useState(initiallySaved);
@@ -33,27 +34,36 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
     }
   };
 
+
   const handleSendEmail = async (e) => {
-    e.preventDefault();
-    setIsSending(true);
-    
-    try {
-      await axios.post(`${BASEURL}/employer/send-email`, 
-        {
-          candidateId: candidate.user._id,
-          ...emailData
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSendSuccess(true);
-      setTimeout(() => setSendSuccess(false), 3000);
-      setEmailData({ subject: '', message: '', jobTitle: '' });
-    } catch (error) {
-      console.error('Error sending email:', error);
-    } finally {
-      setIsSending(false);
+  e.preventDefault();
+  setIsSending(true);
+
+  try {
+    const res = await axios.post(`${BASEURL}/employer/send-email`, 
+      {
+        candidateId: candidate.user._id,
+        ...emailData
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    setSendSuccess(true);
+    setTimeout(() => setSendSuccess(false), 5000);
+    setEmailData({ subject: '', message: '', jobTitle: '' });
+  } catch (error) {
+    if (error.response?.status === 403) {
+     
+      alert("You have reached your free limit. Please pay to unlock more emails.");
+      openRazorpay(token);
+    } else {
+      console.error("Error sending email:", error);
     }
-  };
+  } finally {
+    setIsSending(false);
+  }
+};
+
 
   const getRandomGradient = () => {
     const gradients = [

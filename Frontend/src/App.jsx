@@ -32,7 +32,7 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path='/employer'element={<EmployerHome/>}/>
 
-    <Route element={<ProtectedRoute allowedRoles={['user']} />}> 
+    <Route element={<ProtectedRoute allowedRoles={['user']} redirectTo="/" role="user" />}> 
         <Route path="/interview-intro" element={<InterviewIntro/>}/>
         <Route path="/interview" element={<Interview/>}/>
         <Route path="/chat" element={<ChatComponent/>}/>
@@ -48,7 +48,7 @@ function App() {
       </Route>
     
     
-    <Route element={<ProtectedRoute allowedRoles={['employer']} />}> 
+    <Route element={<ProtectedRoute allowedRoles={['employer']} redirectTo="/employer" role="employer" />}> 
         <Route path='/candidates'element={<CandidatesPage/>}/>
     </Route>
         
