@@ -28,6 +28,11 @@ const userSchema=new mongoose.Schema({
     googleId:{
         type:String
     },
+    credit: {
+        type: Number,
+        default: 0
+    },
+     hasPaid: { type: Boolean, default: false }, 
     isVerified: { type: Boolean, default: false }
 },
 {timestamps: true})
