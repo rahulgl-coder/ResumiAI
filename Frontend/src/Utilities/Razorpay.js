@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useSelector } from 'react-redux';
+
 
   const BASEURL = import.meta.env.VITE_BASEURL;
-    const { user } = useSelector((state) => state.user);
+   
 
 
 
@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
   });
 };
 
-const openRazorpay = async ( token) => {
+const openRazorpay = async ( token,user) => {
   try {
     const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
     if (!res) {

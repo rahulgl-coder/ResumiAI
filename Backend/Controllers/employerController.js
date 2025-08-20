@@ -66,11 +66,14 @@ const checkRegistration = async (req, res) => {
     const userId = req.user.id;
 
     const registered = await CompanyRegister.findOne({ userId });
+
+    console.log(registered);
+    
     
     if (!registered) {
       return res.status(200).json({ status: false, message: "Not registered" });
     }
-    return res.status(400).json({
+    return res.status(202).json({
       status: true,
       message: "Already registered",
       data: registered,
@@ -110,7 +113,7 @@ const getCandidates=async(req,res)=>{
       { $project: { 'user.password': 0, 'user.googleId': 0 } }
     ]);
 
-    console.log(candidates);
+  
     
     res.json(candidates);
   } catch (error) {
@@ -161,6 +164,24 @@ const sendMail = async (req, res) => {
     res.status(500).json({ msg: "Error sending email", error: error.message });
   }
 };
+const checkPayment = async (req, res) => {
+  try {
+    const _id = req.user?.id;
+    if (!_id) {
+      return res.status(401).json({ msg: "Unauthorized: No user ID provided" });
+    }
+
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    return res.status(200).json({ hasPaid: user.hasPaid });
+  } catch (error) {
+    console.error("Error checking payment status:", error);
+    return res.status(500).json({ msg: "Server error" });
+  }
+};
 
 
-module.exports={register,checkRegistration,getCandidates,sendMail}
+module.exports={register,checkRegistration,getCandidates,sendMail,checkPayment}
