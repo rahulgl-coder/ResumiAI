@@ -2,6 +2,7 @@ const CompanyRegister=require('../Models/companyRegistration')
 const Resume=require('../Models/resumeSchema')
 const User=require('../Models/userSchema')
 const nodemailer = require('nodemailer');
+const SavedCandidates=require('../Models/savedCandidate')
 
 
 require('dotenv').config
@@ -183,5 +184,52 @@ const checkPayment = async (req, res) => {
   }
 };
 
+const saveCandidate = async (req, res) => {
+  try {
+    const { candidateId } = req.body;
+    const userId = req.user.id;
 
-module.exports={register,checkRegistration,getCandidates,sendMail,checkPayment}
+    // Find if this user already has a savedCandidates doc
+    let data = await SavedCandidates.findOne({ userId });
+
+    if (data) {
+      // Use addToSet to prevent duplicates
+      await SavedCandidates.updateOne(
+        { userId },
+        { $addToSet: { candidateIds: candidateId } }
+      );
+    } else {
+      data = await SavedCandidates.create({
+        userId,
+        candidateIds: [candidateId],
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Candidate saved successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+const checkSavedCandidates=async(req,res)=>{
+
+try {
+  
+  
+} catch (error) {
+  
+}
+
+}
+
+
+
+module.exports={register,checkRegistration,getCandidates,sendMail,checkPayment,saveCandidate}

@@ -10,5 +10,6 @@ employerRoute.get('/employer/check-registration',authorizeRoles('employer'),cont
 employerRoute.get('/employer/candidates',authorizeRoles('employer'),controller.getCandidates)
 employerRoute.post('/employer/send-email',authorizeRoles('employer'),checkEmailLimit,controller.sendMail)
 employerRoute.get('/employer/check-payment',authorizeRoles('employer'),controller.checkPayment)
+employerRoute.post('/employer/saved-candidates',authorizeRoles('employer'),controller.saveCandidate)
 
 module.exports=employerRoute

@@ -13,6 +13,8 @@ import openRazorpay from '../../Utilities/Razorpay';
 import { useSelector } from 'react-redux';
 import Modal from '../../Components/EmployerComponents/PaymentConfirmModal';
 import EmployerRegisterModal from "../../Components/EmployerComponents/EmployerRegistrationModal";
+import AssessmentWarning from '../../Components/AssesmentWarning';
+
 
 const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved }) => {
   const [isSaved, setIsSaved] = useState(initiallySaved);
@@ -30,8 +32,9 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
   const [showContactForm, setShowContactForm] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(true);
+  
 
-  // Check payment status on component mount
+
   useEffect(() => {
     const checkPaymentStatus = async () => {
       try {
@@ -106,6 +109,7 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
     } catch (error) {
       if (error.response?.status === 403) {
         setShowModal(true);
+    
       } else {
         console.error("Error sending email:", error);
       }
@@ -163,7 +167,7 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="mx-25"
+      className="mx-25 mt-5"
     >
       <button 
         onClick={onBack}
@@ -171,6 +175,8 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
       >
         <ChevronLeft className="mr-1" /> Back to candidates
       </button>
+
+      {!hasPaid&&<AssessmentWarning message={"No Subscription for Viewing Candidate Contact Details"} seconds={25}/>}
 
       <div className="space-y-6">
         {/* Profile Card */}

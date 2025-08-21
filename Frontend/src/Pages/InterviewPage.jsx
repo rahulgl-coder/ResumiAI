@@ -61,7 +61,8 @@ const fetchQuestions = async () => {
     let res;
 
    
-    try {
+    try 
+    {
       res = await axios.get(`${BASEURL}/questions`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,7 +72,9 @@ const fetchQuestions = async () => {
       if (!res.data || !res.data.questions || res.data.questions.length === 0) {
         throw new Error('Invalid or empty response from /questions');
       }
-    } catch (err) {
+    } catch (err) 
+    
+    {
       console.warn('Primary endpoint failed. Using backup.');
 
       res = await axios.get(`${BASEURL}/questions/backup`, {
@@ -177,6 +180,7 @@ const fetchQuestions = async () => {
       </>
     );
   }
+  const message=" ⚠️ Do not refresh or press back button while Assessment is ON"
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
@@ -185,7 +189,7 @@ const fetchQuestions = async () => {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Technical Interview</h1>
           <p className="text-gray-600">Choose the correct answer for each question. You have 10 seconds per question.</p>
-          <AssessmentWarning seconds={15} />
+          <AssessmentWarning seconds={15} message={message} />
         </div>
 
         {/* Progress Bar */}

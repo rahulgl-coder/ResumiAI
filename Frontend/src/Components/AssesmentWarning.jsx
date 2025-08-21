@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const AssessmentWarning = ({ seconds  }) => {
+const AssessmentWarning = ({ seconds,message  }) => {
   const [timeLeft, setTimeLeft] = useState(seconds);
   const [visible, setVisible] = useState(true);
 
@@ -19,7 +19,7 @@ const AssessmentWarning = ({ seconds  }) => {
   return (
     <div className="fixed top-4 right-4 z-50 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-lg shadow-md text-sm font-medium flex items-center justify-between gap-3 min-w-[300px]">
       <div className="flex items-center gap-2">
-        ⚠️ Do not refresh or press back button while Assessment is ON
+       {message}
         <span className="text-xs font-semibold text-red-600">
           ({timeLeft}s)
         </span>
