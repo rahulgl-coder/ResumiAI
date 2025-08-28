@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import Modal from '../../Components/EmployerComponents/PaymentConfirmModal';
 import EmployerRegisterModal from "../../Components/EmployerComponents/EmployerRegistrationModal";
 import AssessmentWarning from '../../Components/AssesmentWarning';
+import handleSaveCandidate from '../../Utilities/handleSaveCandidate';
 
 
 const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved }) => {
@@ -52,23 +53,7 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
     checkPaymentStatus();
   }, [token, BASEURL]);
 
-  const handleSaveCandidate = async () => {
-    try {
-      if (isSaved) {
-        await axios.delete(`${BASEURL}/employer/saved-candidates/${candidate.user._id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } else {
-        await axios.post(`${BASEURL}/employer/saved-candidates`, 
-          { candidateId: candidate.user._id },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-      setIsSaved(!isSaved);
-    } catch (error) {
-      console.error("Failed to toggle save candidate:", error);
-    }
-  };
+
 
   const checkRegistration = async () => {
     try {
@@ -226,7 +211,7 @@ const CandidateProfile = ({ candidate, onBack, token, BASEURL, initiallySaved })
               </div>
             </div>
             <button
-              onClick={handleSaveCandidate}
+              onClick={()=>handleSaveCandidate(isSaved,BASEURL,token,candidate,setIsSaved)}
               className={`p-2 rounded-full ${isSaved ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
             >
               <Bookmark fill={isSaved ? 'currentColor' : 'none'} />

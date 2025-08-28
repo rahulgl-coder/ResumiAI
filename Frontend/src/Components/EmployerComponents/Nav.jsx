@@ -1,6 +1,8 @@
 
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 const Nav=()=>{
+  const navigate=useNavigate()
 
     return(
         <>
@@ -13,7 +15,7 @@ const Nav=()=>{
     className="flex items-center gap-6"
   >
     <button 
-      onClick={() => window.history.back()} 
+      onClick={() => navigate(-1)} 
       className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
     >
       <svg 

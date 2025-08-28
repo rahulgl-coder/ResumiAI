@@ -112,10 +112,16 @@ const dispatch = useDispatch();
 
 }));
 
+
+
+
 onClose()
 if(res.data.user.role==='employer')
   {
   navigate('/employer')
+}
+if(res.data.user.role==='admin'){
+  navigate('/admin')
 }
 }
 if (isSignUp) {
@@ -327,10 +333,16 @@ const handleResend = async () => {
       if(data.user.role==='employer'){
          onClose();
          navigate('/employer')
-         setRegister(true)
+         
+         if(isSignUp){
+          setRegister(true)
+         }
       }else if(data.user.role==='user'){
          onClose()
          navigate('/')
+     }else if(data.user.role==='admin'){
+         navigate('/admin')
+         onClose()
      }
       
     }}

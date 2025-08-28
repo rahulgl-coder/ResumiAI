@@ -1,12 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Briefcase, Star } from 'lucide-react';
+import {  Bookmark} from 'lucide-react';
+
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import Nav from '../../Components/EmployerComponents/Nav';
 import CandidateSearch from '../../Components/EmployerComponents/CandidateSearch';
 import { useSelector } from 'react-redux';
 import CandidateProfile from './CandidateProfile';
+import handleSaveCandidate from '../../Utilities/handleSaveCandidate';
 
 const CandidatesPage = () => {
   const [candidates, setCandidates] = useState([]);
@@ -25,6 +28,7 @@ const CandidatesPage = () => {
   const BASEURL = import.meta.env.VITE_BASEURL;
   const { token } = useSelector((state) => state.user);
   const [hasPaid,setHasPaid]=useState(false)
+  const [isSaved,setIsSaved]=useState(false)
 
   useEffect(() => {
    
@@ -43,7 +47,7 @@ const CandidatesPage = () => {
         console.error("Error checking payment status:", error);
         setHasPaid(false);
       } finally {
-        setIsCheckingPayment(false);
+        // setIsCheckingPayment(false);
       }
     };
     checkPaymentStatus();
@@ -218,6 +222,12 @@ const CandidatesPage = () => {
                             <p className="text-gray-500 filter blur-sm pointer-events-none ">{candidate.user.email}</p>
                             
                           }
+                           <button
+                                        onClick={()=>handleSaveCandidate(isSaved,BASEURL,token,candidate,setIsSaved)}
+                                        className={`p-2 rounded-full ${isSaved ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                                      >
+                                        <Bookmark fill={isSaved ? 'currentColor' : 'none'} />
+                                      </button>
                            
                           </div>
                         </div>

@@ -48,7 +48,7 @@ function App() {
       </Route>
     
     
-    <Route element={<ProtectedRoute allowedRoles={['employer']} redirectTo="/employer" role="employer" />}> 
+    <Route element={<ProtectedRoute allowedRoles={['employer','admin']} redirectTo="/employer" role="employer" />}> 
         <Route path='/candidates'element={<CandidatesPage/>}/>
     </Route>
         
