@@ -37,7 +37,13 @@ function App() {
         <Route path="/interview" element={<Interview/>}/>
         <Route path="/chat" element={<ChatComponent/>}/>
       </Route>    
-       
+{/*        
+        : {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  }, */}
 
     <Route element={<ProtectedRoute allowedRoles={['user','employer']} />}> 
         <Route path="/profile" element={<Profile/>}/>
