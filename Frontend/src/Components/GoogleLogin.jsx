@@ -9,13 +9,14 @@ import { useDispatch } from 'react-redux';
 
 const GoogleLoginButton = ({ buttonText = "Sign In with Google", onSuccessLogin,role }) => {
   const dispatch=useDispatch()
+  const BASEURL=import.meta.env.VITE_BASEURL
   const handleSuccess = async (credentialResponse) => {
     try {
       const decoded = jwtDecode(credentialResponse.credential);
-      console.log(decoded);
+   
       
 
-      const res = await axios.post('http://localhost:5000/auth/google', {
+      const res = await axios.post(`${BASEURL}/auth/google`, {
         token: credentialResponse.credential,role
       });
  
@@ -32,7 +33,7 @@ const GoogleLoginButton = ({ buttonText = "Sign In with Google", onSuccessLogin,
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() => console.log('Login Failed')}
-        text={buttonText} // optional, depending on your button style
+        text={buttonText} 
       />
     </GoogleOAuthProvider>
   );
